@@ -26,30 +26,38 @@
 
 {% stylesheet %}
   .header {
-    border-bottom: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     position: sticky;
-    top: 0;
-    z-index: 100;
-    /* Airy Translucent Effect */
-    background-color: rgba(248, 249, 250, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    top: 1rem; /* Detached from top */
+    z-index: 1000;
+    
+    /* Ethereal Beam Style */
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    margin: 0 auto;
+    width: 95%;
+    max-width: var(--page-width);
+    border-radius: 99px; /* Pill Shape */
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 0 20px rgba(255, 255, 255, 0.5); /* Glowing Halo */
   }
 
   .header__inner {
     display: grid;
     grid-template-columns: 200px 1fr auto;
     align-items: stretch;
-    min-height: 4rem;
+    min-height: 3.5rem; /* Slimmer profile */
   }
 
   .header__title {
     margin: 0;
-    border-right: 1px solid var(--color-border);
     display: flex;
     align-items: center;
-    padding: 0 1.5rem;
-    font-size: 1.2rem;
+    padding: 0 2rem;
+    font-size: 1.1rem;
     letter-spacing: 1px;
   }
 
@@ -60,31 +68,35 @@
 
   .header__menu {
     display: flex;
-    border-right: 1px solid var(--color-border);
+    justify-content: center; /* Center menu in the beam */
   }
 
   .header__menu-item {
-    border-right: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     padding: 0 1.5rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
   }
   
-  .header__menu-item:last-child {
-    border-right: none;
+  .header__menu-item:hover {
+     opacity: 1;
+     text-shadow: 0 0 10px rgba(255,255,255,0.8);
   }
 
   .header__icons {
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    padding-right: 1.5rem;
   }
 
   .header__icons a {
     display: flex;
     align-items: center;
-    padding: 0 1.5rem;
-    border-left: 1px solid var(--color-border);
+    padding: 0 1rem;
     text-decoration: none;
+    font-size: 0.9rem;
   }
 {% endstylesheet %}
 
