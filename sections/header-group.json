@@ -3,7 +3,7 @@
   "name": "t:general.header",
   "sections": {
     "header": {
-      "type": "glitter-header",
+      "type": "header",
       "settings": {}
     }
   },
