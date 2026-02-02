@@ -1,0 +1,13 @@
+{
+  "type": "header",
+  "name": "t:general.header",
+  "sections": {
+    "header": {
+      "type": "glitter-header",
+      "settings": {}
+    }
+  },
+  "order": [
+    "header"
+  ]
+}

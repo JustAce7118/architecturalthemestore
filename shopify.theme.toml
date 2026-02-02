@@ -1,0 +1,13 @@
+# Store details. Learn more: https://shopify.dev/themes/tools/cli#configure-the-cli
+id = ""
+store = "your-store-name.myshopify.com"
+
+# Theme variables
+[settings.presets]
+# theme_info
+name = "artistic-quality-theme"
+version = "1.0.0"
+author = "Your Name"
+
+[variables]
+# Add any theme-specific variables here

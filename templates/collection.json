@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "luxury-sidebar-filters": {
+      "type": "luxury-sidebar-filters",
+      "settings": {}
+    },
+    "main": {
+      "type": "collection",
+      "settings": {}
+    }
+  },
+  "order": ["luxury-sidebar-filters", "main"]
+}

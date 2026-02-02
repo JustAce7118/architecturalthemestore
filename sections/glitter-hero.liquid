@@ -1,0 +1,322 @@
+{%- liquid
+  assign bg_color = section.settings.bg_color
+  assign heading_color = section.settings.heading_color
+  assign subheading_color = section.settings.subheading_color
+  assign button_bg = section.settings.button_bg
+  assign button_text = section.settings.button_text_color
+-%}
+
+<div class="glitter-hero" style="background-color: {{ bg_color }}; --heading-color: {{ heading_color }}; --subheading-color: {{ subheading_color }}; --button-bg: {{ button_bg }}; --button-text: {{ button_text }};">
+  <div class="glitter-hero__container">
+    <!-- Left Section: Typography -->
+    <div class="glitter-hero__content">
+      <h1 class="glitter-hero__heading">
+        {{ section.settings.heading_text }}
+      </h1>
+
+      <p class="glitter-hero__subheading">
+        {{ section.settings.subheading_text }}
+      </p>
+
+      <a href="{{ section.settings.button_link }}" class="glitter-hero__button">
+        <span class="glitter-hero__button-text">{{ section.settings.button_text }}</span>
+        <span class="glitter-hero__shimmer"></span>
+      </a>
+    </div>
+
+    <!-- Right Section: Image -->
+    <div class="glitter-hero__image-section">
+      {% if section.settings.hero_image %}
+        <div class="glitter-hero__image-wrapper">
+          {{ section.settings.hero_image | image_url: width: 600 | image_tag: class: 'glitter-hero__image' }}
+        </div>
+      {% else %}
+        <div class="glitter-hero__placeholder">
+          {{ 'image' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .glitter-hero {
+    width: 100%;
+    padding: 80px 40px;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glitter-hero__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1400px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .glitter-hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .glitter-hero__heading {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--heading-color, #111111);
+    margin: 0;
+    font-family: Georgia, 'Garamond', serif;
+    letter-spacing: -0.02em;
+  }
+
+  .glitter-hero__subheading {
+    font-size: 1.375rem;
+    line-height: 1.6;
+    color: var(--subheading-color, #111111);
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  /* Shimmer Button */
+  .glitter-hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--button-text, #111111);
+    background-color: var(--button-bg, #D4AF37);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: fit-content;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .glitter-hero__button:hover {
+    box-shadow: 0 12px 32px rgba(212, 175, 55, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Shimmer Effect */
+  .glitter-hero__shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    50% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  .glitter-hero__button-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Image Section */
+  .glitter-hero__image-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .glitter-hero__image-wrapper {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .glitter-hero__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(17, 17, 17, 0.12);
+  }
+
+  .glitter-hero__placeholder {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(135deg, #e8e3d6, #d4cfc2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glitter-hero__placeholder svg {
+    width: 200px;
+    height: 200px;
+    opacity: 0.3;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .glitter-hero {
+      padding: 60px 24px;
+      min-height: auto;
+    }
+
+    .glitter-hero__container {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .glitter-hero__heading {
+      font-size: 2.5rem;
+    }
+
+    .glitter-hero__subheading {
+      font-size: 1.125rem;
+    }
+
+    .glitter-hero__image-section {
+      order: -1;
+    }
+
+    .glitter-hero__image-wrapper {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .glitter-hero {
+      padding: 40px 16px;
+    }
+
+    .glitter-hero__heading {
+      font-size: 2rem;
+    }
+
+    .glitter-hero__subheading {
+      font-size: 1rem;
+    }
+
+    .glitter-hero__button {
+      padding: 12px 32px;
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Glitter Hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "GLITTER"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading_text",
+      "label": "Subheading",
+      "default": "Red Carpet Volume. Every Day."
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#F9F7F2"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button Background Color",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#111111"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Glitter Hero",
+      "settings": {
+        "heading_text": "GLITTER",
+        "subheading_text": "Red Carpet Volume. Every Day.",
+        "bg_color": "#F9F7F2",
+        "heading_color": "#111111",
+        "subheading_color": "#111111",
+        "button_bg": "#D4AF37",
+        "button_text_color": "#111111"
+      }
+    }
+  ]
+}
+{% endschema %}

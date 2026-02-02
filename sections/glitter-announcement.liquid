@@ -1,0 +1,192 @@
+<div class="glitter-announcement">
+  <div class="glitter-announcement__container">
+    <!-- Welcome Text -->
+    <div class="glitter-announcement__text">
+      <p class="glitter-announcement__message">
+        {{ section.settings.announcement_text }}
+      </p>
+    </div>
+
+    <!-- Social Icons -->
+    <div class="glitter-announcement__socials">
+      {% if section.settings.facebook_link %}
+        <a href="{{ section.settings.facebook_link }}" class="glitter-announcement__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+          <span class="glitter-announcement__icon">f</span>
+        </a>
+      {% endif %}
+
+      {% if section.settings.instagram_link %}
+        <a href="{{ section.settings.instagram_link }}" class="glitter-announcement__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+          <span class="glitter-announcement__icon">@</span>
+        </a>
+      {% endif %}
+
+      {% if section.settings.tiktok_link %}
+        <a href="{{ section.settings.tiktok_link }}" class="glitter-announcement__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+          <span class="glitter-announcement__icon">♪</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .glitter-announcement {
+    width: 100%;
+    background-color: #111111;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glitter-announcement__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    width: 100%;
+    gap: 40px;
+  }
+
+  .glitter-announcement__text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glitter-announcement__message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #F9F7F2;
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+
+  /* Social Icons */
+  .glitter-announcement__socials {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .glitter-announcement__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #D4AF37;
+    border-radius: 50%;
+    color: #D4AF37;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  .glitter-announcement__social-link:hover {
+    background-color: #D4AF37;
+    color: #111111;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+  }
+
+  .glitter-announcement__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .glitter-announcement {
+      padding: 12px 20px;
+    }
+
+    .glitter-announcement__container {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .glitter-announcement__message {
+      font-size: 0.85rem;
+    }
+
+    .glitter-announcement__socials {
+      gap: 16px;
+    }
+
+    .glitter-announcement__social-link {
+      width: 28px;
+      height: 28px;
+    }
+
+    .glitter-announcement__icon {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .glitter-announcement {
+      padding: 10px 16px;
+    }
+
+    .glitter-announcement__message {
+      font-size: 0.8rem;
+    }
+
+    .glitter-announcement__socials {
+      gap: 12px;
+    }
+
+    .glitter-announcement__social-link {
+      width: 24px;
+      height: 24px;
+    }
+
+    .glitter-announcement__icon {
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "t:sections.glitter_announcement.name",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "announcement_text",
+      "label": "t:sections.glitter_announcement.text",
+      "default": "Welcome to Glitter. Premium hair extensions for red carpet glamour."
+    },
+    {
+      "type": "url",
+      "id": "facebook_link",
+      "label": "t:sections.glitter_announcement.facebook"
+    },
+    {
+      "type": "url",
+      "id": "instagram_link",
+      "label": "t:sections.glitter_announcement.instagram"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_link",
+      "label": "t:sections.glitter_announcement.tiktok"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.glitter_announcement.name",
+      "settings": {
+        "announcement_text": "Welcome to Glitter. Premium hair extensions for red carpet glamour."
+      }
+    }
+  ]
+}
+{% endschema %}

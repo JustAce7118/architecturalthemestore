@@ -1,0 +1,274 @@
+<div
+  class="vibe-hero"
+  style="
+    --heading-gradient-from: {{ section.settings.heading_gradient_from }};
+    --heading-gradient-to: {{ section.settings.heading_gradient_to }};
+    --button-bg: {{ section.settings.button_background }};
+    --button-text: {{ section.settings.button_text_color }};
+    --button-border: {{ section.settings.button_border_color }};
+  "
+>
+  <div class="vibe-hero__content">
+    <!-- Left Section -->
+    <div class="vibe-hero__left">
+      <h1 class="vibe-hero__heading">
+        {{ section.settings.heading_text }}
+      </h1>
+
+      <p class="vibe-hero__subheading">
+        {{ section.settings.subheading_text }}
+      </p>
+
+      <a href="{{ section.settings.button_link }}" class="vibe-hero__button">
+        {{ section.settings.button_text }}
+      </a>
+    </div>
+
+    <!-- Right Section -->
+    <div class="vibe-hero__right">
+      {% if section.settings.hero_image %}
+        <div class="vibe-hero__image-wrapper">
+          {{ section.settings.hero_image | image_url: width: 600 | image_tag: class: 'vibe-hero__image' }}
+        </div>
+      {% else %}
+        <div class="vibe-hero__placeholder">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .vibe-hero {
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    padding: 60px 40px;
+    overflow: hidden;
+  }
+
+  .vibe-hero__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: center;
+  }
+
+  .vibe-hero__left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .vibe-hero__heading {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0;
+    background: linear-gradient(135deg, var(--heading-gradient-from), var(--heading-gradient-to));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .vibe-hero__subheading {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.7);
+    margin: 0;
+    max-width: 500px;
+  }
+
+  .vibe-hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--button-text);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--button-border);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    width: fit-content;
+    cursor: pointer;
+  }
+
+  .vibe-hero__button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .vibe-hero__right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .vibe-hero__image-wrapper {
+    width: 100%;
+    max-width: 500px;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .vibe-hero__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .vibe-hero__placeholder {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .placeholder-svg {
+    width: 200px;
+    height: 200px;
+    opacity: 0.5;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .vibe-hero {
+      min-height: auto;
+      padding: 40px 20px;
+    }
+
+    .vibe-hero__content {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .vibe-hero__heading {
+      font-size: 2.25rem;
+    }
+
+    .vibe-hero__subheading {
+      font-size: 1rem;
+    }
+
+    .vibe-hero__right {
+      order: -1;
+    }
+
+    .vibe-hero__image-wrapper,
+    .vibe-hero__placeholder {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .vibe-hero {
+      padding: 30px 16px;
+    }
+
+    .vibe-hero__heading {
+      font-size: 1.75rem;
+    }
+
+    .vibe-hero__button {
+      padding: 12px 24px;
+      font-size: 0.9rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.vibe_hero.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "t:sections.vibe_hero.heading",
+      "default": "Modern Hero Experience"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading_text",
+      "label": "t:sections.vibe_hero.subheading",
+      "default": "Craft extraordinary digital experiences with our cutting-edge design and development solutions."
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_from",
+      "label": "t:sections.vibe_hero.gradient_from",
+      "default": "#6366f1"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_to",
+      "label": "t:sections.vibe_hero.gradient_to",
+      "default": "#a855f7"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "t:sections.vibe_hero.image"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "t:sections.vibe_hero.button_text",
+      "default": "Explore Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.vibe_hero.button_link",
+      "default": "/"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "t:sections.vibe_hero.button_text_color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "t:sections.vibe_hero.button_bg",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "t:sections.vibe_hero.button_border",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.vibe_hero.name"
+    }
+  ]
+}
+{% endschema %}

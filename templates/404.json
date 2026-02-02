@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "section-404": {
+      "type": "section-404"
+    }
+  },
+  "order": ["section-404"]
+}

@@ -1,0 +1,576 @@
+{%- liquid
+  assign filters = collection.filters
+  assign active_filter_count = 0
+  
+  comment
+    Count active filters for the Clear All button
+  endcomment
+  for filter in filters
+    assign active_filter_count = active_filter_count | plus: filter.active_values.size
+  endfor
+  
+  comment
+    Detect filters for proper rendering
+  endcomment
+  assign price_filter = filters | where: "type", "price_range" | first
+  assign color_filter = filters | where: "label", "Color" | first
+  assign availability_filter = filters | where: "label", "Availability" | first
+-%}
+
+<div class="custom-sidebar-filter">
+  <!-- Filter Header -->
+  <div class="custom-sidebar-filter__header">
+    <h3 class="custom-sidebar-filter__title">FILTERS</h3>
+    
+    {% if active_filter_count > 0 %}
+    <a href="{{ collection.url }}" class="custom-sidebar-filter__clear-all">
+      <span>Clear All</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Filters Container -->
+  <div class="custom-sidebar-filter__container">
+    <form id="CustomSidebarFilterForm" class="custom-sidebar-filter__form" action="{{ collection.url }}">
+      {% comment %} Prevent default Shopify filter form from interfering {% endcomment %}
+      <input type="hidden" name="sort_by" value="{{ collection.sort_by | default: collection.default_sort_by }}">
+      
+      {% if price_filter %}
+      <!-- Price Filter Accordion (open by default) -->
+      <details class="custom-sidebar-filter__accordion" data-accordion="price" open>
+        <summary class="custom-sidebar-filter__accordion-header">
+          <span class="custom-sidebar-filter__accordion-title">Price</span>
+          <span class="custom-sidebar-filter__accordion-icon">
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+              <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </summary>
+        <div class="custom-sidebar-filter__accordion-content">
+          <div class="custom-sidebar-filter__price-range">
+            <div class="custom-sidebar-filter__price-inputs">
+              <label class="custom-sidebar-filter__price-label">
+                <span class="custom-sidebar-filter__price-text">From</span>
+                <span class="custom-sidebar-filter__price-currency">$</span>
+                <input type="number" 
+                       name="filter.v.price.gte" 
+                       value="{{ price_filter.min_value.value | default: 0 | divided_by: 100 }}"
+                       min="0" 
+                       max="{{ price_filter.range_max | divided_by: 100 }}"
+                       class="custom-sidebar-filter__price-input"
+                       placeholder="0">
+              </label>
+              <label class="custom-sidebar-filter__price-label">
+                <span class="custom-sidebar-filter__price-text">To</span>
+                <span class="custom-sidebar-filter__price-currency">$</span>
+                <input type="number" 
+                       name="filter.v.price.lte" 
+                       value="{{ price_filter.max_value.value | default: price_filter.range_max | divided_by: 100 }}"
+                       min="0" 
+                       max="{{ price_filter.range_max | divided_by: 100 }}"
+                       class="custom-sidebar-filter__price-input"
+                       placeholder="{{ price_filter.range_max | divided_by: 100 }}">
+              </label>
+            </div>
+          </div>
+        </div>
+      </details>
+      {% endif %}
+
+      {% if color_filter %}
+      <!-- Color Filter Accordion (open by default) -->
+      <details class="custom-sidebar-filter__accordion" data-accordion="color" open>
+        <summary class="custom-sidebar-filter__accordion-header">
+          <span class="custom-sidebar-filter__accordion-title">Color</span>
+          <span class="custom-sidebar-filter__accordion-icon">
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+              <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </summary>
+        <div class="custom-sidebar-filter__accordion-content">
+          <div class="custom-sidebar-filter__color-swatches">
+            {% for filter_value in color_filter.values %}
+              <label class="custom-sidebar-filter__color-swatch-wrapper">
+                <input type="checkbox" 
+                       name="{{ filter_value.param_name }}" 
+                       value="{{ filter_value.value | escape }}"
+                       {% if filter_value.active %}checked{% endif %}
+                       class="custom-sidebar-filter__color-input">
+                <span class="custom-sidebar-filter__color-swatch" 
+                      data-color="{{ filter_value.value | handle }}">
+                </span>
+                <span class="custom-sidebar-filter__color-label">{{ filter_value.label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+      </details>
+      {% endif %}
+
+      {% if availability_filter %}
+      <!-- Availability Filter Accordion (open by default) -->
+      <details class="custom-sidebar-filter__accordion" data-accordion="availability" open>
+        <summary class="custom-sidebar-filter__accordion-header">
+          <span class="custom-sidebar-filter__accordion-title">Availability</span>
+          <span class="custom-sidebar-filter__accordion-icon">
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+              <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </summary>
+        <div class="custom-sidebar-filter__accordion-content">
+          {% for filter_value in availability_filter.values %}
+            <label class="custom-sidebar-filter__checkbox-wrapper">
+              <input type="checkbox" 
+                     name="{{ filter_value.param_name }}" 
+                     value="{{ filter_value.value | escape }}"
+                     {% if filter_value.active %}checked{% endif %}
+                     class="custom-sidebar-filter__checkbox">
+              <span class="custom-sidebar-filter__custom-checkbox"></span>
+              <span class="custom-sidebar-filter__checkbox-label">{{ filter_value.label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+
+      {% comment %} Render other filters dynamically {% endcomment %}
+      {% for filter in filters %}
+        {% unless filter.label == 'Color' or filter.label == 'Availability' or filter.type == 'price_range' %}
+          {% if filter.type == 'boolean' or filter.type == 'list' %}
+          <details class="custom-sidebar-filter__accordion" data-accordion="{{ filter.label | handle }}" open>
+            <summary class="custom-sidebar-filter__accordion-header">
+              <span class="custom-sidebar-filter__accordion-title">{{ filter.label }}</span>
+              <span class="custom-sidebar-filter__accordion-icon">
+                <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+                  <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </summary>
+            <div class="custom-sidebar-filter__accordion-content">
+              {% for filter_value in filter.values %}
+                <label class="custom-sidebar-filter__checkbox-wrapper">
+                  <input type="checkbox" 
+                         name="{{ filter_value.param_name }}" 
+                         value="{{ filter_value.value | escape }}"
+                         {% if filter_value.active %}checked{% endif %}
+                         class="custom-sidebar-filter__checkbox">
+                  <span class="custom-sidebar-filter__custom-checkbox"></span>
+                  <span class="custom-sidebar-filter__checkbox-label">{{ filter_value.label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </details>
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+    </form>
+  </div>
+</div>
+
+<style>
+  /* Custom Sidebar Filter Styles - Scoped to prevent theme conflicts */
+  .custom-sidebar-filter {
+    --sidebar-primary: #bf953f; /* Gold color */
+    --sidebar-primary-dark: #a7832f;
+    --sidebar-bg: #f8f6f0;
+    --sidebar-border: #e8e3d6;
+    --sidebar-text: #111111;
+    --sidebar-text-light: #666666;
+    --sidebar-radius: 6px;
+    --sidebar-shadow: 0 2px 12px rgba(17, 17, 17, 0.08);
+    
+    font-family: 'Playfair Display', Georgia, serif;
+    background: var(--sidebar-bg);
+    border-radius: var(--sidebar-radius);
+    padding: 24px;
+    box-shadow: var(--sidebar-shadow);
+  }
+
+  /* Header */
+  .custom-sidebar-filter__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--sidebar-border);
+    padding-bottom: 16px;
+  }
+
+  .custom-sidebar-filter__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--sidebar-text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+
+  .custom-sidebar-filter__clear-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--sidebar-primary);
+    color: var(--sidebar-primary);
+    padding: 8px 16px;
+    border-radius: var(--sidebar-radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    text-decoration: none;
+    opacity: 0;
+    animation: customFadeIn 0.3s ease forwards;
+  }
+
+  .custom-sidebar-filter__clear-all:hover {
+    background: var(--sidebar-primary);
+    color: white;
+    text-decoration: none;
+  }
+
+  @keyframes customFadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Accordion Styles */
+  .custom-sidebar-filter__accordion {
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 16px;
+  }
+
+  .custom-sidebar-filter__accordion:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .custom-sidebar-filter__accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    cursor: pointer;
+    font-family: inherit;
+    list-style: none;
+  }
+
+  .custom-sidebar-filter__accordion-header::-webkit-details-marker {
+    display: none;
+  }
+
+  .custom-sidebar-filter__accordion-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sidebar-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .custom-sidebar-filter__accordion-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .custom-sidebar-filter__accordion[open] .custom-sidebar-filter__accordion-icon {
+    transform: rotate(180deg);
+  }
+
+  .custom-sidebar-filter__accordion-content {
+    padding: 8px 0 16px 0;
+  }
+
+  /* Price Range Styles */
+  .custom-sidebar-filter__price-range {
+    padding: 8px 0;
+  }
+
+  .custom-sidebar-filter__price-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .custom-sidebar-filter__price-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .custom-sidebar-filter__price-text {
+    font-size: 0.75rem;
+    color: var(--sidebar-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .custom-sidebar-filter__price-currency {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sidebar-text-light);
+    pointer-events: none;
+  }
+
+  .custom-sidebar-filter__price-input {
+    position: relative;
+    width: 100%;
+    padding: 8px 8px 8px 24px;
+    border: 1px solid var(--sidebar-border);
+    border-radius: var(--sidebar-radius);
+    font-family: inherit;
+    font-size: 0.875rem;
+    background: white;
+    transition: border-color 0.3s ease;
+  }
+
+  .custom-sidebar-filter__price-input:focus {
+    outline: none;
+    border-color: var(--sidebar-primary);
+  }
+
+  /* Color Swatches */
+  .custom-sidebar-filter__color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .custom-sidebar-filter__color-swatch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+    padding: 4px;
+  }
+
+  .custom-sidebar-filter__color-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .custom-sidebar-filter__color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--sidebar-border);
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-sidebar-filter__color-swatch::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .custom-sidebar-filter__color-input:checked + .custom-sidebar-filter__color-swatch {
+    border-color: #bf953f;
+    box-shadow: 0 4px 12px rgba(191, 149, 63, 0.3);
+  }
+
+  .custom-sidebar-filter__color-input:checked + .custom-sidebar-filter__color-swatch::before {
+    border-color: #bf953f;
+    box-shadow: 0 0 0 2px #bf953f, 0 0 8px rgba(191, 149, 63, 0.5);
+  }
+
+  .custom-sidebar-filter__color-label {
+    font-size: 0.875rem;
+    color: var(--sidebar-text-light);
+    font-weight: 500;
+  }
+
+  /* Dynamic Color Styles */
+  {% for filter in filters %}
+    {% if filter.label == 'Color' %}
+      {% for filter_value in filter.values %}
+        {% assign color_value = filter_value.value | handle %}
+        {% assign color_value_lower = filter_value.value | downcase %}
+        
+        {% comment %} Map common color names to hex values {% endcomment %}
+        {% assign color_map = "white:#ffffff,black:#000000,red:#ff0000,blue:#0000ff,green:#008000,yellow:#ffff00,pink:#ffc0cb,purple:#800080,orange:#ffa500,gray:#808080,brown:#a52a2a,gold:#ffd700,silver:#c0c0c0,teal:#008080,navy:#000080,maroon:#800000,olive:#808000,lime:#00ff00,aqua:#00ffff,fuchsia:#ff00ff" %}
+        
+        {% assign color_hex = "#888888" %}{% comment %} Default gray for unknown colors {% endcomment %}
+        
+        {% assign color_pairs = color_map | split: ',' %}
+        {% for pair in color_pairs %}
+          {% assign key_value = pair | split: ':' %}
+          {% if key_value[0] == color_value_lower %}
+            {% assign color_hex = key_value[1] %}
+          {% endif %}
+        {% endfor %}
+        
+        .custom-sidebar-filter__color-swatch[data-color="{{ color_value }}"] {
+          background-color: {{ color_hex }};
+        }
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+
+  /* Checkbox Styles */
+  .custom-sidebar-filter__checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 8px;
+  }
+
+  .custom-sidebar-filter__checkbox-wrapper:last-child {
+    margin-bottom: 0;
+  }
+
+  .custom-sidebar-filter__checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .custom-sidebar-filter__custom-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--sidebar-border);
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-sidebar-filter__checkbox:checked + .custom-sidebar-filter__custom-checkbox {
+    background: var(--sidebar-primary);
+    border-color: var(--sidebar-primary);
+  }
+
+  .custom-sidebar-filter__checkbox:checked + .custom-sidebar-filter__custom-checkbox::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .custom-sidebar-filter__checkbox-label {
+    font-size: 0.875rem;
+    color: var(--sidebar-text);
+    font-weight: 500;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .custom-sidebar-filter {
+      padding: 16px;
+    }
+    
+    .custom-sidebar-filter__header {
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+    }
+    
+    .custom-sidebar-filter__title {
+      font-size: 1rem;
+    }
+    
+    .custom-sidebar-filter__accordion-header {
+      padding: 12px 0;
+    }
+    
+    .custom-sidebar-filter__color-swatches {
+      gap: 8px;
+    }
+    
+    .custom-sidebar-filter__price-inputs {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('CustomSidebarFilterForm');
+    
+    if (!form) return;
+    
+    // Real-time form submission on filter change
+    const inputs = form.querySelectorAll('input[type="checkbox"], input[type="number"], select');
+    
+    inputs.forEach(input => {
+      input.addEventListener('change', function() {
+        // Small delay to ensure all values are updated
+        setTimeout(() => {
+          form.submit();
+        }, 100);
+      });
+    });
+
+    // Handle price input validation
+    const priceInputs = form.querySelectorAll('.custom-sidebar-filter__price-input');
+    priceInputs.forEach(input => {
+      input.addEventListener('input', function(e) {
+        // Ensure value is within bounds
+        const min = parseFloat(this.getAttribute('min')) || 0;
+        const max = parseFloat(this.getAttribute('max')) || Infinity;
+        let value = parseFloat(this.value) || 0;
+        
+        if (value < min) this.value = min;
+        if (value > max) this.value = max;
+      });
+    });
+
+    // Add visual feedback for color swatches
+    const colorInputs = form.querySelectorAll('.custom-sidebar-filter__color-input');
+    colorInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        // Add pulse animation for visual feedback
+        const swatch = this.nextElementSibling;
+        if (this.checked) {
+          swatch.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            swatch.style.transform = 'scale(1)';
+          }, 300);
+        }
+      });
+    });
+  });
+
+  // Function to programmatically submit form (for external use)
+  window.customSidebarSubmitForm = function() {
+    const form = document.getElementById('CustomSidebarFilterForm');
+    if (form) {
+      form.submit();
+    }
+  };
+</script>
+
+{% schema %}
+{
+  "name": "Custom Sidebar Filters",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Custom Sidebar Filters"
+    }
+  ]
+}
+{% endschema %}
