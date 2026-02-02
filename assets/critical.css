@@ -122,12 +122,12 @@ body {
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
 
-  /* Ethereal Sky Gradient + Cloud Grid */
+  /* Deep Engineering Gradient + Technical Grid */
   background:
-    linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px),
-    linear-gradient(180deg, #E0F7FA 0%, #F0F4F8 100%);
-  /* Sky to Cloud */
+    linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+    linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  /* Deep Navy to Midnight */
   background-size: 40px 40px, 40px 40px, 100% 100%;
   background-position: center top;
   background-attachment: fixed;

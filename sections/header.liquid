@@ -26,18 +26,18 @@
 
 {% stylesheet %}
   .header {
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 1.5rem; /* Floating lower */
     z-index: 1000;
     
-    /* Building Slab Look */
-    background-color: rgba(255, 255, 255, 0.35); /* Thicker glass */
+    /* Dark Structure Slab */
+    background-color: var(--color-glass);
     {% if section.settings.background_image != blank %}
       background-image: url('{{ section.settings.background_image | image_url: width: 2000 }}');
       background-size: cover;
       background-position: center;
-      background-blend-mode: overlay;
+      background-blend-mode: multiply; /* Darken texture */
     {% endif %}
     
     backdrop-filter: blur(24px) saturate(180%);
@@ -46,10 +46,10 @@
     margin: 0 auto;
     width: 92%;
     max-width: var(--page-width);
-    border-radius: 16px; /* Structural rounded corners, not pill */
+    border-radius: 12px;
     box-shadow: 
-      0 10px 40px -10px rgba(0, 0, 0, 0.1), /* Deep shadow/lift */
-      0 1px 0 rgba(255, 255, 255, 0.6) inset; /* Top light highlight */
+      0 20px 50px -10px rgba(0, 0, 0, 0.5), /* Deep Black Shadow */
+      0 1px 0 rgba(255, 255, 255, 0.1) inset;
   }
 
   .header__inner {
