@@ -1,0 +1,70 @@
+{% comment %}
+  Blueprint Rich Text
+  - Centered manifesto text
+  - UpperCase, Monospace
+  - Border top/bottom
+{% endcomment %}
+
+<div class="blueprint-rich-text">
+  <div class="blueprint-rich-text__content">
+    <h2 class="blueprint-rich-text__heading">{{ section.settings.heading | upcase }}</h2>
+    <div class="blueprint-rich-text__text">
+      {{ section.settings.text }}
+    </div>
+  </div>
+</div>
+
+<style>
+  .blueprint-rich-text {
+    border-bottom: 1px solid var(--color-border);
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: var(--color-background);
+  }
+
+  .blueprint-rich-text__content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .blueprint-rich-text__heading {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+  }
+
+  .blueprint-rich-text__text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+  
+  .blueprint-rich-text__text p {
+    margin-bottom: 1rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Blueprint Rich Text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "BUILT FOR FUNCTION"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>MINIMALIST DESIGN. MAXIMUM UTILITY. ENGINEERED FOR THE MODERN WORKSPACE.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blueprint Rich Text"
+    }
+  ]
+}
+{% endschema %}

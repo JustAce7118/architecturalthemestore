@@ -116,5 +116,60 @@ body {
   grid-column: 1 / -1;
 }
 
-/* Vibe Injection: 01-architectural */
-body { background-color: #f0f0f0; color: #000; font-family: 'Courier New', monospace; } * { border: 1px solid #000 !important; border-radius: 0 !important; } h1, h2, h3, .button { text-transform: uppercase; letter-spacing: 2px; }
+/* Blueprint Theme Global Styles */
+body {
+  font-family: var(--font-primary--family);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* STRICT BLUEPRINT GRID SYSTEM */
+/* Enforce 1px border on everything to create the schematic look */
+*, *::before, *::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Targeted borders to avoid double-borders chaos, but following the 'every sections has a visible 1px border' rule */
+.shopify-section,
+header,
+footer,
+.card,
+.button,
+input,
+select,
+textarea {
+  border: 1px solid var(--color-border);
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .button, .navigation, label, th, td, .caption-with-letter-spacing {
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em;
+  font-weight: 400; /* Monospace doesn't need bold usually */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.button {
+  background: transparent;
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  padding: 1rem 2rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+

@@ -1,0 +1,66 @@
+{% comment %}
+  Blueprint Scrolling Bar
+  - Repeats text infinitely
+  - Monospace, UpperCase
+  - Borders top/bottom
+{% endcomment %}
+
+<div class="scrolling-bar">
+  <div class="scrolling-bar__content">
+    {% for i in (1..10) %}
+      <span class="scrolling-bar__item">{{ section.settings.text }}</span>
+      <span class="scrolling-bar__separator">//</span>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .scrolling-bar {
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    padding: 0.5rem 0;
+  }
+
+  .scrolling-bar__content {
+    display: inline-block;
+    animation: scroll 20s linear infinite;
+  }
+
+  .scrolling-bar__item {
+    font-weight: 700;
+    margin-left: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .scrolling-bar__separator {
+    margin-left: 1rem;
+    opacity: 0.5;
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Blueprint Scrolling Bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "PROJECT: ECOMMERCE // STATUS: LIVE"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blueprint Scrolling Bar"
+    }
+  ]
+}
+{% endschema %}

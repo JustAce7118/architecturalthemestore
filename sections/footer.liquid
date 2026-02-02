@@ -1,39 +1,100 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+<footer class="footer">
+  <div class="footer__grid">
+    <div class="footer__block footer__block--branding">
+      <h3 class="footer__heading">// ARCHITECTURAL_STORE //</h3>
+      <p class="footer__status">STATUS: ONLINE</p>
+    </div>
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+    <div class="footer__block footer__block--menu">
+      <ul class="footer__menu-list">
+        {% for link in section.settings.menu.links %}
+          <li>{{ link.title | link_to: link.url }}</li>
+        {% endfor %}
+      </ul>
+    </div>
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+    <div class="footer__block footer__block--system">
+      <p class="system-ready-text">// SYSTEM_READY //</p>
+    </div>
+  </div>
+  
+  <div class="footer__bottom">
+     <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} [ALL RIGHTS RESERVED]</p>
   </div>
 </footer>
 
 {% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
+  .footer {
+    border-top: 1px solid var(--color-border);
+    margin-top: 4rem;
+    padding-top: 0;
   }
-  footer a {
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .footer__block {
+    padding: 2rem;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .footer__block:last-child {
+    border-right: none;
+  }
+
+  .footer__heading {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  .footer__status {
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+
+  .footer__menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer__menu-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer__menu-list a {
     text-decoration: none;
-    color: var(--color-foreground);
   }
-  footer .footer__links,
-  footer .footer__payment {
+
+  .footer__block--system {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .system-ready-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    animation: blink 2s infinite;
+  }
+
+  .footer__bottom {
+    padding: 1rem 2rem;
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
   }
 {% endstylesheet %}
 
@@ -45,12 +106,6 @@
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
     }
   ]
 }

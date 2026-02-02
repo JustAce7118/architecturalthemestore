@@ -1,77 +1,41 @@
 {
   "sections": {
-    "announcement": {
-      "type": "glitter-announcement",
-      "settings": {}
+    "top_bar": {
+      "type": "blueprint-scrolling-bar",
+      "settings": {
+        "text": "// PROJECT: ECOMMERCE // STATUS: LIVE //"
+      }
     },
     "hero": {
-      "type": "glitter-hero",
-      "settings": {}
+      "type": "blueprint-hero",
+      "settings": {
+        "heading": "SYSTEM 01",
+        "spec_type": "ARCHITECTURAL",
+        "spec_material": "CONCRETE / STEEL",
+        "text": "<p>Precision engineered for the modern environment. Defining the new standard in structural aesthetics.</p>",
+        "button_label": "VIEW SPECS"
+      }
     },
-    "interactive_tiles": {
-      "type": "glitter-interactive-tiles",
-      "blocks": {
-        "tile_1": {
-          "type": "tile",
-          "settings": {
-            "heading": "Spring Collection"
-          }
-        },
-        "tile_2": {
-          "type": "tile",
-          "settings": {
-            "heading": "Summer Vibes"
-          }
-        },
-        "tile_3": {
-          "type": "tile",
-          "settings": {
-            "heading": "Luxury Edition"
-          }
-        }
-      },
-      "block_order": ["tile_1", "tile_2", "tile_3"],
-      "settings": {}
+    "rich_text": {
+      "type": "blueprint-rich-text",
+      "settings": {
+        "heading": "BUILT FOR FUNCTION",
+        "text": "<p>ELIMINATING THE UNNECESSARY. FOCUSING ON THE ESSENTIAL. PURE UTILITY.</p>"
+      }
     },
-    "hotspots": {
-      "type": "glitter-hotspots",
-      "blocks": {
-        "hotspot_1": {
-          "type": "hotspot",
-          "settings": {
-            "horizontal_position": 25,
-            "vertical_position": 35,
-            "feature_title": "Volume",
-            "feature_description": "Crafted for maximum fullness and density"
-          }
-        },
-        "hotspot_2": {
-          "type": "hotspot",
-          "settings": {
-            "horizontal_position": 50,
-            "vertical_position": 50,
-            "feature_title": "Length",
-            "feature_description": "Premium lengths from 12 to 26 inches"
-          }
-        },
-        "hotspot_3": {
-          "type": "hotspot",
-          "settings": {
-            "horizontal_position": 75,
-            "vertical_position": 65,
-            "feature_title": "Quality",
-            "feature_description": "100% virgin Remy hair, hand-tied perfection"
-          }
-        }
-      },
-      "block_order": ["hotspot_1", "hotspot_2", "hotspot_3"],
-      "settings": {}
-    },
-    "transformation": {
-      "type": "glitter-transformation",
-      "settings": {}
+    "collection_grid": {
+      "type": "blueprint-grid-collection",
+      "settings": {
+        "title": "COMPONENT LIBRARY",
+        "products_to_show": 8
+      }
     }
   },
-  "order": ["announcement", "hero", "interactive_tiles", "hotspots", "transformation"]
+  "order": [
+    "top_bar",
+    "hero",
+    "rich_text",
+    "collection_grid"
+  ]
 }
 

@@ -1,0 +1,197 @@
+{% comment %}
+  Blueprint Hero Section
+  - Schematic Image (Left) + Tech Description (Right)
+  - Split layout with 1px border
+  - Technical Data Overlay
+{% endcomment %}
+
+<div class="blueprint-hero">
+  <div class="blueprint-hero__image-container">
+    {% if section.settings.image != blank %}
+      {% render 'image',
+        image: section.settings.image,
+        class: 'blueprint-hero__image',
+        width: 1200,
+        height: 800
+      %}
+    {% else %}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'blueprint-hero__image placeholder-svg' }}
+    {% endif %}
+    
+    <div class="blueprint-hero__overlay-data">
+      <span>FIG. 01</span>
+      <span>SCALE 1:1</span>
+    </div>
+  </div>
+
+  <div class="blueprint-hero__content">
+    <div class="blueprint-hero__content-inner">
+      <h2 class="blueprint-hero__heading">{{ section.settings.heading }}</h2>
+      <div class="blueprint-hero__specs">
+        <p class="blueprint-hero__spec-item">
+          <span class="spec-label">TYPE:</span>
+          <span class="spec-value">{{ section.settings.spec_type }}</span>
+        </p>
+        <p class="blueprint-hero__spec-item">
+          <span class="spec-label">MATERIA:</span>
+          <span class="spec-value">{{ section.settings.spec_material }}</span>
+        </p>
+      </div>
+      <div class="blueprint-hero__text">
+        {{ section.settings.text }}
+      </div>
+      
+      {% if section.settings.button_label != blank %}
+        <a href="{{ section.settings.button_link }}" class="button blueprint-hero__button">
+          {{ section.settings.button_label }} ->
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .blueprint-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--color-border);
+    min-height: 80vh;
+  }
+
+  .blueprint-hero__image-container {
+    border-right: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blueprint-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.2); /* Technical look */
+  }
+
+  .blueprint-hero__overlay-data {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.8rem;
+    background: var(--color-background);
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+  }
+
+  .blueprint-hero__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+  }
+
+  .blueprint-hero__content-inner {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .blueprint-hero__heading {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    line-height: 1;
+  }
+
+  .blueprint-hero__specs {
+    margin-bottom: 2rem;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 0;
+  }
+
+  .blueprint-hero__spec-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .blueprint-hero__spec-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .spec-label {
+    opacity: 0.7;
+  }
+
+  .blueprint-hero__text {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .blueprint-hero__button {
+    display: inline-block;
+  }
+
+  @media screen and (max-width: 750px) {
+    .blueprint-hero {
+      grid-template-columns: 1fr;
+    }
+    .blueprint-hero__image-container {
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+      height: 50vh;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Blueprint Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "MODULAR SYSTEM 01"
+    },
+    {
+      "type": "text",
+      "id": "spec_type",
+      "label": "Spec: Type",
+      "default": "AERIAL"
+    },
+    {
+      "type": "text",
+      "id": "spec_material",
+      "label": "Spec: Material",
+      "default": "COMPOSITE"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Engineered for performance. Minimalist design with maximum utility.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "EXPLORE SPECS"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blueprint Hero"
+    }
+  ]
+}
+{% endschema %}

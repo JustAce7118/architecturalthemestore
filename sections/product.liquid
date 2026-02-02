@@ -1,52 +1,204 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+<div class="product-page">
+  <div class="product-page__media">
+    {% for image in product.images %}
+      <div class="product-page__media-item">
+        {% render 'image', class: 'product-image', image: image %}
+      </div>
+    {% endfor %}
+  </div>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+  <div class="product-page__info">
+    {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when '@app' %}
+            {% render block %}
+          
+          {% when 'title' %}
+            <div class="product-block product-block--title" {{ block.shopify_attributes }}>
+              <h1>{{ product.title | upcase }}</h1>
+              <div class="product-sku">REF: {{ product.id | slice: -4, 4 }}</div>
+            </div>
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+          {% when 'price' %}
+            <div class="product-block product-block--price" {{ block.shopify_attributes }}>
+              <span class="price">{{ product.price | money }}</span>
+            </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+          {% when 'description' %}
+            <div class="product-block product-block--description" {{ block.shopify_attributes }}>
+              {{ product.description }}
+            </div>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+          {% when 'buy_buttons' %}
+            <div class="product-block product-block--buy" {{ block.shopify_attributes }}>
+              <button type="submit" name="add" class="button button--full-width">
+                ADD TO CART
+              </button>
+            </div>
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+          {% when 'collapsible_tab' %}
+            <details class="product-block product-block--collapsible" {{ block.shopify_attributes }}>
+              <summary>
+                {{ block.settings.heading | upcase }}
+                <span class="icon-plus">+</span>
+              </summary>
+              <div class="collapsible-content">
+                {{ block.settings.content }}
+                {{ block.settings.page.content }}
+              </div>
+            </details>
+        {% endcase %}
       {% endfor %}
-    </select>
-
-    <input type="text" name="quantity" min="1" value="1">
-
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
+    {% endform %}
+  </div>
 </div>
+
+<style>
+  .product-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--color-border);
+    min-height: 100vh;
+  }
+
+  .product-page__media {
+    border-right: 1px solid var(--color-border);
+  }
+
+  .product-page__media-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .product-page__media-item:last-child {
+    border-bottom: none;
+  }
+
+  .product-image {
+    width: 100%;
+    display: block;
+  }
+
+  .product-page__info {
+    padding: 2rem; 
+  }
+
+  .product-block {
+    margin-bottom: 1.5rem;
+  }
+
+  .product-block--title h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+  
+  .product-sku {
+    opacity: 0.6;
+    font-size: 0.9rem;
+  }
+
+  .product-block--price {
+    font-size: 1.5rem;
+  }
+
+  .product-block--description {
+    line-height: 1.6;
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.5rem;
+  }
+
+  .button--full-width {
+    width: 100%;
+    text-align: center;
+  }
+
+  .product-block--collapsible {
+    border: 1px solid var(--color-border);
+    margin-bottom: -1px; /* Overlap borders */
+  }
+
+  .product-block--collapsible summary {
+    padding: 1rem;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    background-color: var(--color-background);
+  }
+
+  .product-block--collapsible[open] summary {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .collapsible-content {
+    padding: 1rem;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 900px) {
+    .product-page {
+      grid-template-columns: 1fr;
+    }
+    .product-page__media {
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+</style>
 
 {% schema %}
 {
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "name": "Blueprint Product",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Technical Specs"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page content"
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

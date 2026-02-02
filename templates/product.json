@@ -1,4 +1,59 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "main": {
+      "type": "product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "specs": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "TECHNICAL SPECS",
+            "content": "<p><strong>TYPE:</strong> Modular Component<br><strong>REF:</strong> A-001<br><strong>GRADE:</strong> Industrial</p>"
+          }
+        },
+        "dimensions": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "DIMENSIONS",
+            "content": "<p><strong>Height:</strong> 1200mm<br><strong>Width:</strong> 800mm<br><strong>Depth:</strong> 450mm</p>"
+          }
+        },
+        "material": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "MATERIAL",
+            "content": "<p>High-grade aluminum alloy with matte powder coat finish.</p>"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "buy_buttons",
+        "specs",
+        "dimensions",
+        "material",
+        "description"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
 }

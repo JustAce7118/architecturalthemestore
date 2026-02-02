@@ -1,0 +1,122 @@
+{% comment %}
+  Blueprint Grid Collection
+  - 4 Column Grid
+  - Uses card-product snippet
+  - Shows Vendor
+  - Grid borders
+{% endcomment %}
+
+<div class="blueprint-grid">
+  <div class="blueprint-grid__header">
+    <h2 class="blueprint-grid__heading">{{ section.settings.title | upcase }}</h2>
+    <a href="{{ section.settings.collection.url }}" class="blueprint-grid__link">VIEW ALL -></a>
+  </div>
+
+  <div class="blueprint-grid__products">
+    {% assign collection = section.settings.collection %}
+    {% for product in collection.products limit: section.settings.products_to_show %}
+      <div class="blueprint-grid__item">
+        {% render 'card-product', product: product %}
+      </div>
+    {% else %}
+      {% for i in (1..4) %}
+        <div class="blueprint-grid__item">
+          {% render 'card-product', product: blank %}
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .blueprint-grid {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blueprint-grid__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blueprint-grid__heading {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .blueprint-grid__link {
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .blueprint-grid__products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* No gap because we want borders to touch/overlap correctly or manage them on items */
+  }
+
+  .blueprint-grid__item {
+    border-right: 1px solid var(--color-border);
+    /* Ensure the last item in a row doesn't have a double border if we were using gap, 
+       but here we rely on the card's internal border or this container's border system.
+       Refining to avoid double borders: */
+    border-right: none; 
+    border-left: 1px solid var(--color-border);
+    margin-left: -1px; /* Overlap borders */
+  }
+  
+  .blueprint-grid__item:first-child {
+      border-left: none;
+      margin-left: 0;
+  }
+
+  @media screen and (max-width: 990px) {
+    .blueprint-grid__products {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .blueprint-grid__item:nth-child(2n) {
+       border-right: none;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .blueprint-grid__products {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Blueprint Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "FEATURED ITEMS"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "default": 4,
+      "label": "Products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blueprint Grid"
+    }
+  ]
+}
+{% endschema %}
