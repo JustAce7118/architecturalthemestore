@@ -25,15 +25,23 @@
       </ul>
     </div>
 
-    {% if section.settings.show_system_status %}
     <div class="footer__block footer__block--system">
-      <p class="system-ready-text">// SYSTEM_READY //</p>
+      <div class="architectural-feature">
+        <div class="arch-icon {{ section.settings.feature_icon }}"></div>
+        <div class="arch-data">
+          <span class="arch-label">{{ section.settings.feature_heading | default: 'COORDINATES' }}</span>
+          <span class="arch-value">{{ section.settings.feature_text | default: '34.0522° N, 118.2437° W' }}</span>
+        </div>
+      </div>
     </div>
-    {% endif %}
   </div>
   
   <div class="footer__bottom">
-     <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} [ALL RIGHTS RESERVED]</p>
+     {% if section.settings.copyright_text != blank %}
+       <div class="footer__copyright-custom">{{ section.settings.copyright_text }}</div>
+     {% else %}
+       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} [ALL RIGHTS RESERVED]</p>
+     {% endif %}
   </div>
 </footer>
 
@@ -71,6 +79,7 @@
   .footer__status {
     font-size: 0.8rem;
     opacity: 0.7;
+    margin-top: 0.5rem;
   }
 
   .footer__menu-list {
@@ -91,15 +100,68 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    background-color: var(--color-foreground, #000); /* Fallback to black if var missing */
+    color: var(--color-background, #fff);
+    position: relative;
+    overflow: hidden;
   }
 
-  .system-ready-text {
+  .architectural-feature {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: monospace;
+    z-index: 2;
+  }
+
+  .arch-icon {
+    width: 12px;
+    height: 12px;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  .arch-icon.grid {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 0;
+    width: 16px; 
+    height: 16px;
+    background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);
+    background-size: 4px 4px;
+    animation: none;
+  }
+
+  .arch-icon.pulse {
+     /* default styles apply */
+  }
+
+  .arch-icon.dot {
+    animation: none;
+  }
+  
+  .arch-icon.none {
+    display: none;
+  }
+
+  .arch-data {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .arch-label {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .arch-value {
+    font-size: 0.9rem;
     font-weight: bold;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    animation: blink 2s infinite;
+    letter-spacing: 0.5px;
   }
 
   .footer__bottom {
@@ -107,11 +169,15 @@
     font-size: 0.8rem;
     text-align: left;
   }
+  
+  .footer__copyright-custom p {
+    margin: 0;
+  }
 
-  @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0; }
-    100% { opacity: 1; }
+  @keyframes pulse {
+    0% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0.4; transform: scale(0.9); }
   }
 {% endstylesheet %}
 
@@ -120,9 +186,17 @@
   "name": "t:general.footer",
   "settings": [
     {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
+    },
+    {
+      "type": "header",
+      "content": "Branding"
     },
     {
       "type": "image_picker",
@@ -152,11 +226,43 @@
        "default": 120
     },
     {
-      "type": "checkbox",
-      "id": "show_system_status",
-      "label": "Show System Ready Block",
-      "default": true,
-      "info": "Controls the visibility of the white status box."
+      "type": "header",
+      "content": "Architectural Feature",
+      "info": "Replaces the system status box."
+    },
+    {
+      "type": "text",
+      "id": "feature_heading",
+      "label": "Feature Label",
+      "default": "COORDINATES"
+    },
+    {
+      "type": "text",
+      "id": "feature_text",
+      "label": "Feature Data",
+      "default": "34.0522° N, 118.2437° W"
+    },
+    {
+      "type": "select",
+      "id": "feature_icon",
+      "label": "Feature Icon",
+      "options": [
+        { "value": "pulse", "label": "Pulsing Dot" },
+        { "value": "grid", "label": "Grid Block" },
+        { "value": "dot", "label": "Static Dot" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "pulse"
+    },
+    {
+      "type": "header",
+      "content": "Copyright"
+    },
+    {
+       "type": "richtext",
+       "id": "copyright_text",
+       "label": "Custom Copyright Text",
+       "info": "Leave blank to use default copyright."
     }
   ]
 }
