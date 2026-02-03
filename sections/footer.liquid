@@ -1,7 +1,13 @@
 <footer class="footer">
   <div class="footer__grid">
     <div class="footer__block footer__block--branding">
-      <h3 class="footer__heading">// ARCHITECTURAL_STORE //</h3>
+      <h3 class="footer__heading">
+        {%- if section.settings.footer_logo != blank -%}
+          {{ section.settings.footer_logo | image_url: width: section.settings.footer_logo_width | image_tag: loading: 'lazy', class: 'footer__logo-image', width: section.settings.footer_logo.width, height: section.settings.footer_logo.height }}
+        {%- else -%}
+          // {{ shop.name | upcase }} //
+        {%- endif -%}
+      </h3>
       <p class="footer__status">STATUS: ONLINE</p>
     </div>
 
@@ -13,9 +19,11 @@
       </ul>
     </div>
 
+    {% if section.settings.show_system_status %}
     <div class="footer__block footer__block--system">
       <p class="system-ready-text">// SYSTEM_READY //</p>
     </div>
+    {% endif %}
   </div>
   
   <div class="footer__bottom">
@@ -109,6 +117,28 @@
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer Logo"
+    },
+    {
+       "type": "range",
+       "id": "footer_logo_width",
+       "min": 50,
+       "max": 300,
+       "step": 10,
+       "unit": "px",
+       "label": "Footer Logo Width",
+       "default": 120
+    },
+    {
+      "type": "checkbox",
+      "id": "show_system_status",
+      "label": "Show System Ready Block",
+      "default": true,
+      "info": "Controls the visibility of the white status box."
     }
   ]
 }

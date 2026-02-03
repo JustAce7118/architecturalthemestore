@@ -1,7 +1,13 @@
 <header class="header">
   <div class="header__inner">
     <h2 class="header__title">
-      <a href="{{ routes.root_url }}">{{ shop.name | upcase }}</a>
+      <a href="{{ routes.root_url }}">
+        {%- if section.settings.logo != blank -%}
+          {{ section.settings.logo | image_url: width: section.settings.logo_width | image_tag: loading: 'eager', class: 'header__logo-image', width: section.settings.logo.width, height: section.settings.logo.height }}
+        {%- else -%}
+          {{ shop.name | upcase }}
+        {%- endif -%}
+      </a>
     </h2>
 
     <nav class="header__menu">
@@ -120,6 +126,21 @@
       "type": "image_picker",
       "id": "background_image",
       "label": "Structure Texture (Building Image)"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+       "type": "range",
+       "id": "logo_width",
+       "min": 50,
+       "max": 300,
+       "step": 10,
+       "unit": "px",
+       "label": "Logo Width",
+       "default": 120
     }
   ]
 }
