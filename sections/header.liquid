@@ -4,6 +4,8 @@
       <a href="{{ routes.root_url }}">
         {%- if section.settings.logo != blank -%}
           {{ section.settings.logo | image_url: width: section.settings.logo_width | image_tag: loading: 'eager', class: 'header__logo-image', width: section.settings.logo.width, height: section.settings.logo.height }}
+        {%- elsif section.settings.logo_text != blank -%}
+          {{ section.settings.logo_text }}
         {%- else -%}
           {{ shop.name | upcase }}
         {%- endif -%}
@@ -131,6 +133,12 @@
       "type": "image_picker",
       "id": "logo",
       "label": "Logo Image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo Text",
+      "info": "Overrides the default shop name if no logo image is uploaded."
     },
     {
        "type": "range",
