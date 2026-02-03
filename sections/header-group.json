@@ -15,7 +15,9 @@
       "type": "header",
       "settings": {
         "menu": "",
-        "background_image": "shopify://shop_images/unnamed__11_-removebg-preview.png"
+        "background_image": "shopify://shop_images/unnamed__11_-removebg-preview.png",
+        "logo": "shopify://shop_images/unnamed__11_-removebg-preview.png",
+        "logo_width": 120
       }
     }
   },
