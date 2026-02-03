@@ -30,7 +30,7 @@
     "schematic": {
       "type": "blueprint-schematic-detail",
       "settings": {
-        "image": "shopify://shop_images/Instagram.jpg"
+        "image": "shopify://shop_images/unnamed_10.jpg"
       }
     },
     "rich_text": {
@@ -50,12 +50,26 @@
       "type": "blueprint-grid-collection",
       "settings": {
         "title": "COMPONENT LIBRARY",
-        "collection": "",
-        "products_to_show": 8
+        "collection": "the-ultimate-smart-home-ecosystem",
+        "products_to_show": 4
       }
     },
     "gallery": {
       "type": "blueprint-project-gallery",
+      "blocks": {
+        "report_BWGB7d": {
+          "type": "report",
+          "settings": {
+            "image": "shopify://shop_images/From_KlickPin_CF_Pin_oleh_Hernan_David_Leon_Guevara_di_Estampados_para_remeras___Desain_editorial_Desain_portofolio_Desain_situs_web_1.jpg",
+            "ref_code": "IMG_001",
+            "location": "Sector 7G",
+            "caption": "Structural integrity test passed."
+          }
+        }
+      },
+      "block_order": [
+        "report_BWGB7d"
+      ],
       "settings": {
         "title": "FIELD OPERATIONS"
       }

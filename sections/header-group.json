@@ -13,7 +13,10 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "",
+        "background_image": "shopify://shop_images/unnamed__11_-removebg-preview.png"
+      }
     }
   },
   "order": [
