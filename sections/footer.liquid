@@ -40,7 +40,7 @@
      {% if section.settings.copyright_text != blank %}
        <div class="footer__copyright-custom">{{ section.settings.copyright_text }}</div>
      {% else %}
-       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} [ALL RIGHTS RESERVED]</p>
+       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} {{ section.settings.copyright_notice }}</p>
      {% endif %}
   </div>
 </footer>
@@ -262,7 +262,14 @@
        "type": "richtext",
        "id": "copyright_text",
        "label": "Custom Copyright Text",
-       "info": "Leave blank to use default copyright."
+       "info": "Overrides the entire copyright line."
+    },
+    {
+       "type": "text",
+       "id": "copyright_notice",
+       "label": "Rights Notice",
+       "default": "[ALL RIGHTS RESERVED]",
+       "info": "Appended to the default copyright (Year + Store Name)."
     }
   ]
 }
