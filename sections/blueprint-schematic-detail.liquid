@@ -1,0 +1,228 @@
+{% comment %}
+  Blueprint Schematic Detail
+  - Technical Hotspots overlay
+  - SVG Measurement lines
+  - Dark Glass floating cards on hover
+{% endcomment %}
+
+<div class="schematic-detail">
+  <div class="schematic-detail__container">
+    <div class="schematic-detail__image-wrapper">
+      {% if section.settings.image != blank %}
+        {% render 'image',
+          image: section.settings.image,
+          class: 'schematic-detail__image',
+          width: 2000,
+          height: 1200
+        %}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'schematic-detail__image placeholder-svg' }}
+      {% endif %}
+      
+      <!-- Decorative Measurement Lines -->
+      <div class="schematic-detail__overlay-lines">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="10" y1="10" x2="10" y2="90" stroke="var(--color-accent)" stroke-width="0.2" opacity="0.5" />
+          <line x1="90" y1="10" x2="90" y2="90" stroke="var(--color-accent)" stroke-width="0.2" opacity="0.5" />
+          <line x1="10" y1="50" x2="90" y2="50" stroke="var(--color-accent)" stroke-width="0.1" opacity="0.3" stroke-dasharray="2 2" />
+        </svg>
+      </div>
+
+      {% for block in section.blocks %}
+        <div class="schematic-hotspot" style="top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;">
+          <button class="schematic-hotspot__trigger" aria-label="View Detail">
+            <span class="crosshair">+</span>
+          </button>
+          
+          <div class="schematic-hotspot__card">
+             <h4 class="schematic-hotspot__title">{{ block.settings.heading | upcase }}</h4>
+             <p class="schematic-hotspot__text">{{ block.settings.text }}</p>
+             <span class="schematic-hotspot__ref">REF: {{ forloop.index | prepend: '00' }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .schematic-detail {
+    border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.05));
+    padding: 4rem 0;
+    overflow: hidden;
+  }
+
+  .schematic-detail__container {
+    width: 95%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    border: 1px solid var(--color-border);
+    position: relative;
+    background: rgba(15, 23, 42, 0.4);
+  }
+
+  .schematic-detail__image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .schematic-detail__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1) brightness(0.8);
+    transition: filter 0.5s ease;
+  }
+  
+  .schematic-detail:hover .schematic-detail__image {
+     filter: grayscale(80%) contrast(1.1) brightness(0.9);
+  }
+
+  .schematic-detail__overlay-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .schematic-hotspot {
+    position: absolute;
+    z-index: 10;
+  }
+
+  .schematic-hotspot__trigger {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-accent);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--color-accent);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .schematic-hotspot__trigger:hover {
+    background: var(--color-accent);
+    color: #0f172a;
+    box-shadow: 0 0 15px var(--color-accent);
+    transform: scale(1.1);
+  }
+  
+  .crosshair {
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+
+  .schematic-hotspot__card {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    width: 280px;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(16px);
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+  
+  .schematic-hotspot:hover .schematic-hotspot__card {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .schematic-hotspot__title {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 0.5rem;
+  }
+  
+  .schematic-hotspot__text {
+    font-size: 0.8rem;
+    color: var(--color-foreground);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  
+  .schematic-hotspot__ref {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    display: block;
+    text-align: right;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Schematic Detail",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Schematic Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Point",
+      "settings": [
+        {
+          "type": "range",
+          "id": "top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Top Position",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "left",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Left Position",
+          "default": 50
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Label",
+          "default": "Structural Joint"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "High-tensile composite material with reinforced bonding."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Schematic Detail",
+      "blocks": [
+        { "type": "hotspot", "settings": {"top": 30, "left": 40} },
+        { "type": "hotspot", "settings": {"top": 60, "left": 70} }
+      ]
+    }
+  ]
+}
+{% endschema %}

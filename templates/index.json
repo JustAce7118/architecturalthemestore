@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "top_bar": {
@@ -27,11 +18,67 @@
         "button_link": ""
       }
     },
+    "schematic": {
+      "type": "blueprint-schematic-detail",
+      "settings": {},
+      "blocks": {
+        "point1": {
+          "type": "hotspot",
+          "settings": {
+            "top": 30,
+            "left": 40,
+            "heading": "Reinforced Joint",
+            "text": "CNC machined connection point."
+          }
+        },
+        "point2": {
+          "type": "hotspot",
+          "settings": {
+            "top": 60,
+            "left": 70,
+            "heading": "Composite Shell",
+            "text": "Lightweight, high-durability finish."
+          }
+        }
+      }
+    },
     "rich_text": {
       "type": "blueprint-rich-text",
       "settings": {
         "heading": "BUILT FOR FUNCTION",
         "text": "<p>ELIMINATING THE UNNECESSARY. FOCUSING ON THE ESSENTIAL. PURE UTILITY.</p>"
+      }
+    },
+    "specs": {
+      "type": "blueprint-spec-grid",
+      "settings": {
+        "title": "CORE SPECIFICATIONS"
+      },
+      "blocks": {
+        "spec1": {
+          "type": "spec",
+          "settings": {
+            "label": "Tensile Strength",
+            "value": "2400 MPa",
+            "code": "TS_24"
+          }
+        },
+        "spec2": {
+          "type": "spec",
+          "settings": {
+            "label": "Thermal Limit",
+            "value": "450°C",
+            "code": "TL_450"
+          }
+        },
+        "spec3": {
+          "type": "spec",
+          "settings": {
+            "label": "Weight Class",
+            "value": "Ultra-Light",
+            "code": "WC_01"
+          }
+        }
       }
     },
     "collection_grid": {
@@ -41,12 +88,39 @@
         "collection": "",
         "products_to_show": 8
       }
+    },
+    "gallery": {
+      "type": "blueprint-project-gallery",
+      "settings": {
+        "title": "FIELD OPERATIONS"
+      },
+      "blocks": {
+        "rep1": {
+          "type": "report",
+          "settings": {
+            "ref_code": "SITE_A",
+            "location": "Sector 4",
+            "caption": "Deployment successful."
+          }
+        },
+        "rep2": {
+          "type": "report",
+          "settings": {
+            "ref_code": "SITE_B",
+            "location": "Lab 2",
+            "caption": "Testing phase complete."
+          }
+        }
+      }
     }
   },
   "order": [
     "top_bar",
     "hero",
+    "schematic",
     "rich_text",
-    "collection_grid"
+    "specs",
+    "collection_grid",
+    "gallery"
   ]
 }

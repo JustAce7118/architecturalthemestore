@@ -1,0 +1,234 @@
+{% comment %}
+  Blueprint Project Gallery (Field Reports)
+  - Masonry / Grid Layout
+  - Metadata tags on images (Ref, Date, Loc)
+  - Scanning animation on hover
+{% endcomment %}
+
+<div class="field-reports">
+  <div class="field-reports__header">
+     <h3 class="field-reports__title">{{ section.settings.title | upcase }}</h3>
+     <span class="field-reports__status">// STATUS: DOCUMENTED</span>
+  </div>
+
+  <div class="field-reports__grid">
+    {% for block in section.blocks %}
+      <div class="field-report-card">
+        <div class="field-report-card__image-wrapper">
+          {% if block.settings.image != blank %}
+            {% render 'image',
+              image: block.settings.image,
+              class: 'field-report-card__image',
+              width: 800,
+              height: 800
+            %}
+          {% else %}
+             {{ 'image' | placeholder_svg_tag: 'field-report-card__image placeholder-svg' }}
+          {% endif %}
+          
+          <div class="field-report-card__overlay">
+             <div class="field-report-card__scanner"></div>
+          </div>
+        </div>
+
+        <div class="field-report-card__meta">
+          <div class="meta-row">
+            <span class="meta-label">REF:</span>
+            <span class="meta-value">{{ block.settings.ref_code }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">LOC:</span>
+            <span class="meta-value">{{ block.settings.location }}</span>
+          </div>
+          <p class="field-report-card__caption">{{ block.settings.caption }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .field-reports {
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .field-reports__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .field-reports__title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--color-accent);
+  }
+  
+  .field-reports__status {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    animation: blink 2s infinite;
+  }
+
+  .field-reports__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  .field-report-card {
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .field-report-card__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .field-report-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: transform 0.5s ease;
+  }
+
+  .field-report-card:hover .field-report-card__image {
+     transform: scale(1.05);
+     filter: grayscale(0%) contrast(1.1);
+  }
+
+  .field-report-card__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  
+  .field-report-card__scanner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--color-accent);
+    box-shadow: 0 0 10px var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .field-report-card:hover .field-report-card__scanner {
+    opacity: 1;
+    animation: scan 1.5s linear infinite;
+  }
+
+  .field-report-card__meta {
+    padding: 1rem;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    padding-bottom: 0.25rem;
+  }
+  
+  .meta-label {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  
+  .meta-value {
+    opacity: 0.8;
+    font-family: monospace;
+  }
+
+  .field-report-card__caption {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    line-height: 1.4;
+  }
+
+  @keyframes scan {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Field Reports (Gallery)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "SITE DOCUMENTATION"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "report",
+      "name": "Report Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "ref_code",
+          "label": "Reference Code",
+          "default": "IMG_001"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "Location",
+          "default": "Sector 7G"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Structural integrity test passed."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Field Reports (Gallery)",
+      "blocks": [
+        { "type": "report" },
+        { "type": "report" },
+        { "type": "report" }
+      ]
+    }
+  ]
+}
+{% endschema %}
