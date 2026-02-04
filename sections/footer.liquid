@@ -1,5 +1,6 @@
 <footer class="footer">
   <div class="footer__grid">
+    <!-- 1. Branding Block -->
     <div class="footer__block footer__block--branding">
       <h3 class="footer__heading">
         {%- if section.settings.footer_logo != blank -%}
@@ -17,6 +18,7 @@
       <p class="footer__status">STATUS: ONLINE</p>
     </div>
 
+    <!-- 2. Menu Block -->
     <div class="footer__block footer__block--menu">
       <ul class="footer__menu-list">
         {% for link in section.settings.menu.links %}
@@ -25,6 +27,49 @@
       </ul>
     </div>
 
+    <!-- 3. Newsletter Block -->
+    <div class="footer__block footer__block--newsletter">
+      <h3 class="footer__heading">{{ section.settings.newsletter_heading | default: 'NEWSLETTER' }}</h3>
+      <div class="footer__newsletter-content">
+        <p class="footer__newsletter-text">{{ section.settings.newsletter_text | default: 'Subscribe for updates.' }}</p>
+        {% form 'customer', class: 'footer__newsletter-form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="newsletter-input-group">
+            <input
+              id="NewsletterForm--{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              class="newsletter-input"
+              value="{{ form.email }}"
+              aria-required="true"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              {% if form.errors %}
+                autofocus
+                aria-invalid="true"
+                aria-describedby="Newsletter-error--{{ section.id }}"
+              {% elsif form.posted_successfully? %}
+                aria-describedby="Newsletter-success--{{ section.id }}"
+              {% endif %}
+              placeholder="Email address"
+              required
+            >
+            <button type="submit" class="newsletter-button" name="commit" aria-label="Subscribe">
+              &rarr;
+            </button>
+          </div>
+          {%- if form.errors -%}
+            <small class="newsletter-message error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
+          {%- endif -%}
+          {%- if form.posted_successfully? -%}
+            <small class="newsletter-message success">Success!</small>
+          {%- endif -%}
+        {% endform %}
+      </div>
+    </div>
+
+    <!-- 4. System/Social Block -->
     <div class="footer__block footer__block--system">
       <div class="architectural-feature">
         <div class="arch-icon {{ section.settings.feature_icon }}"></div>
@@ -32,6 +77,21 @@
           <span class="arch-label">{{ section.settings.feature_heading | default: 'COORDINATES' }}</span>
           <span class="arch-value">{{ section.settings.feature_text | default: '34.0522° N, 118.2437° W' }}</span>
         </div>
+      </div>
+      
+      <div class="footer__socials">
+        {%- if section.settings.social_instagram != blank -%}
+          <a href="{{ section.settings.social_instagram }}" class="social-link" title="Instagram" target="_blank">IG</a>
+        {%- endif -%}
+        {%- if section.settings.social_facebook != blank -%}
+          <a href="{{ section.settings.social_facebook }}" class="social-link" title="Facebook" target="_blank">FB</a>
+        {%- endif -%}
+        {%- if section.settings.social_twitter != blank -%}
+          <a href="{{ section.settings.social_twitter }}" class="social-link" title="Twitter" target="_blank">TW</a>
+        {%- endif -%}
+        {%- if section.settings.social_linkedin != blank -%}
+          <a href="{{ section.settings.social_linkedin }}" class="social-link" title="LinkedIn" target="_blank">LI</a>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -57,13 +117,37 @@
 
   .footer__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 Columns */
     border-bottom: 1px solid var(--color-border);
+  }
+  
+  @media screen and (max-width: 900px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__block:nth-child(even) {
+      border-right: none;
+    }
+    .footer__block:nth-child(odd) {
+      border-right: 1px solid var(--color-border);
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+    }
+    .footer__block {
+      border-right: none !important;
+      border-bottom: 1px solid var(--color-border);
+    }
   }
 
   .footer__block {
     padding: 2rem;
     border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
   }
 
   .footer__block:last-child {
@@ -79,7 +163,7 @@
   .footer__status {
     font-size: 0.8rem;
     opacity: 0.7;
-    margin-top: 0.5rem;
+    margin-top: auto; /* Push to bottom */
   }
 
   .footer__menu-list {
@@ -96,11 +180,63 @@
     text-decoration: none;
   }
 
-  .footer__block--system {
+  /* Newsletter Styles */
+  .footer__newsletter-text {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+  
+  .newsletter-input-group {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-foreground, #000); /* Fallback to black if var missing */
+    border: 1px solid var(--color-foreground);
+  }
+  
+  .newsletter-input {
+    flex-grow: 1;
+    border: none;
+    padding: 0.5rem;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.9rem;
+    min-width: 0; /* Fix flex overflow */
+  }
+  
+  .newsletter-input:focus {
+    outline: none;
+    background-color: rgba(var(--color-foreground-rgb), 0.05);
+  }
+  
+  .newsletter-button {
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--color-foreground);
+    padding: 0 1rem;
+    cursor: pointer;
+    color: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  
+  .newsletter-button:hover {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+  }
+
+  .newsletter-message {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .newsletter-message.error { color: red; }
+  .newsletter-message.success { color: green; }
+
+  /* System/Social Block */
+  .footer__block--system {
+    justify-content: space-between;
+    background-color: var(--color-foreground, #000);
     color: var(--color-background, #fff);
     position: relative;
     overflow: hidden;
@@ -112,6 +248,7 @@
     gap: 15px;
     font-family: monospace;
     z-index: 2;
+    margin-bottom: 2rem;
   }
 
   .arch-icon {
@@ -162,6 +299,28 @@
     font-size: 0.9rem;
     font-weight: bold;
     letter-spacing: 0.5px;
+  }
+  
+  .footer__socials {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    z-index: 2;
+  }
+  
+  .social-link {
+    color: inherit;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.9rem;
+    border: 1px solid currentColor;
+    padding: 0.2rem 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  .social-link:hover {
+    background-color: currentColor;
+    color: var(--color-foreground, #000); /* Invert */
   }
 
   .footer__bottom {
@@ -227,6 +386,22 @@
     },
     {
       "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter Heading",
+      "default": "NEWSLETTER"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_text",
+      "label": "Newsletter Text",
+      "default": "Subscribe for updates."
+    },
+    {
+      "type": "header",
       "content": "Architectural Feature",
       "info": "Replaces the system status box."
     },
@@ -253,6 +428,30 @@
         { "value": "none", "label": "None" }
       ],
       "default": "pulse"
+    },
+    {
+      "type": "header",
+      "content": "Social Media"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook Link"
+    },
+    {
+      "type": "url",
+      "id": "social_twitter",
+      "label": "Twitter/X Link"
+    },
+    {
+      "type": "url",
+      "id": "social_linkedin",
+      "label": "LinkedIn Link"
     },
     {
       "type": "header",
