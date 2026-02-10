@@ -1,45 +1,76 @@
-<footer class="footer">
-  <div class="footer__grid">
-    <!-- 1. Branding Block -->
-    <div class="footer__block footer__block--branding">
-      <h3 class="footer__heading">
+{% comment %}
+  Blueprint Footer
+  - Technical schematic layout
+  - Dark glass panels with cyan accents
+  - Monospace typography, dashed borders
+  - Section header with metadata tag
+{% endcomment %}
+
+<footer class="blueprint-footer">
+  <!-- Section Header Bar -->
+  <div class="blueprint-footer__header">
+    <h3 class="blueprint-footer__title">{{ section.settings.footer_title | default: 'SYSTEM INDEX' }}</h3>
+    <span class="blueprint-footer__meta">// REV {{ 'now' | date: '%Y' }}.{{ 'now' | date: '%m' }} — STATUS: ACTIVE</span>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="blueprint-footer__grid">
+
+    <!-- 1. Branding / Identity Panel -->
+    <div class="blueprint-footer__panel blueprint-footer__panel--identity">
+      <div class="panel-label">IDENTITY</div>
+      <div class="panel-content">
         {%- if section.settings.footer_logo != blank -%}
-          {{ section.settings.footer_logo | image_url: width: section.settings.footer_logo_width | image_tag: loading: 'lazy', class: 'footer__logo-image', width: section.settings.footer_logo.width, height: section.settings.footer_logo.height }}
+          {{ section.settings.footer_logo | image_url: width: section.settings.footer_logo_width | image_tag: loading: 'lazy', class: 'blueprint-footer__logo-img', width: section.settings.footer_logo.width, height: section.settings.footer_logo.height }}
         {%- endif -%}
 
-        {%- if section.settings.footer_logo_text != blank -%}
-          <span style="display: block; margin-top: 5px; color: {{ section.settings.footer_logo_text_color }};">// {{ section.settings.footer_logo_text }} //</span>
-        {%- endif -%}
+        <h4 class="blueprint-footer__brand-name">
+          {%- if section.settings.footer_logo_text != blank -%}
+            {{ section.settings.footer_logo_text }}
+          {%- else -%}
+            {{ shop.name | upcase }}
+          {%- endif -%}
+        </h4>
 
-        {%- if section.settings.footer_logo == blank and section.settings.footer_logo_text == blank -%}
-          // {{ shop.name | upcase }} //
-        {%- endif -%}
-      </h3>
-      <p class="footer__status">STATUS: ONLINE</p>
+        {% if section.settings.tagline != blank %}
+          <p class="blueprint-footer__tagline">{{ section.settings.tagline }}</p>
+        {% endif %}
+
+        <div class="blueprint-footer__status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">ONLINE</span>
+        </div>
+      </div>
     </div>
 
-    <!-- 2. Menu Block -->
-    <div class="footer__block footer__block--menu">
-      <ul class="footer__menu-list">
-        {% for link in section.settings.menu.links %}
-          <li>{{ link.title | link_to: link.url }}</li>
-        {% endfor %}
-      </ul>
+    <!-- 2. Navigation Panel -->
+    <div class="blueprint-footer__panel blueprint-footer__panel--nav">
+      <div class="panel-label">NAVIGATION</div>
+      <div class="panel-content">
+        <ul class="blueprint-footer__nav-list">
+          {% for link in section.settings.menu.links %}
+            <li class="blueprint-footer__nav-item">
+              <span class="nav-ref">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+              {{ link.title | upcase | link_to: link.url, class: 'blueprint-footer__nav-link' }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
-    <!-- 3. Newsletter Block -->
-    <div class="footer__block footer__block--newsletter">
-      <h3 class="footer__heading">{{ section.settings.newsletter_heading | default: 'NEWSLETTER' }}</h3>
-      <div class="footer__newsletter-content">
-        <p class="footer__newsletter-text">{{ section.settings.newsletter_text | default: 'Subscribe for updates.' }}</p>
-        {% form 'customer', class: 'footer__newsletter-form' %}
+    <!-- 3. Newsletter / Comms Panel -->
+    <div class="blueprint-footer__panel blueprint-footer__panel--comms">
+      <div class="panel-label">{{ section.settings.newsletter_heading | default: 'COMMUNICATIONS' }}</div>
+      <div class="panel-content">
+        <p class="blueprint-footer__comms-text">{{ section.settings.newsletter_text | default: 'Subscribe for project updates and field reports.' }}</p>
+        {% form 'customer', class: 'blueprint-footer__form' %}
           <input type="hidden" name="contact[tags]" value="newsletter">
-          <div class="newsletter-input-group">
+          <div class="blueprint-footer__input-row">
             <input
               id="NewsletterForm--{{ section.id }}"
               type="email"
               name="contact[email]"
-              class="newsletter-input"
+              class="blueprint-footer__input"
               value="{{ form.email }}"
               aria-required="true"
               autocorrect="off"
@@ -52,291 +83,450 @@
               {% elsif form.posted_successfully? %}
                 aria-describedby="Newsletter-success--{{ section.id }}"
               {% endif %}
-              placeholder="Email address"
+              placeholder="ENTER_EMAIL"
               required
             >
-            <button type="submit" class="newsletter-button" name="commit" aria-label="Subscribe">
-              &rarr;
+            <button type="submit" class="blueprint-footer__submit" name="commit" aria-label="Subscribe">
+              TRANSMIT →
             </button>
           </div>
           {%- if form.errors -%}
-            <small class="newsletter-message error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</small>
+            <small class="blueprint-footer__msg blueprint-footer__msg--error" id="Newsletter-error--{{ section.id }}">
+              ERR: {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+            </small>
           {%- endif -%}
           {%- if form.posted_successfully? -%}
-            <small class="newsletter-message success">Success!</small>
+            <small class="blueprint-footer__msg blueprint-footer__msg--success" id="Newsletter-success--{{ section.id }}">
+              ✓ SIGNAL_RECEIVED
+            </small>
           {%- endif -%}
         {% endform %}
       </div>
     </div>
 
-    <!-- 4. System/Social Block -->
-    <div class="footer__block footer__block--system">
-      <div class="architectural-feature">
-        <div class="arch-icon {{ section.settings.feature_icon }}"></div>
-        <div class="arch-data">
-          <span class="arch-label">{{ section.settings.feature_heading | default: 'COORDINATES' }}</span>
-          <span class="arch-value">{{ section.settings.feature_text | default: '34.0522° N, 118.2437° W' }}</span>
+    <!-- 4. Data / Coordinates Panel -->
+    <div class="blueprint-footer__panel blueprint-footer__panel--data">
+      <div class="panel-label">{{ section.settings.feature_heading | default: 'COORDINATES' }}</div>
+      <div class="panel-content">
+        <div class="blueprint-footer__data-block">
+          <div class="data-icon {{ section.settings.feature_icon }}"></div>
+          <span class="data-value">{{ section.settings.feature_text | default: '34.0522° N, 118.2437° W' }}</span>
         </div>
-      </div>
-      
-      <div class="footer__socials">
-        {%- if section.settings.social_instagram != blank -%}
-          <a href="{{ section.settings.social_instagram }}" class="social-link" title="Instagram" target="_blank">IG</a>
-        {%- endif -%}
-        {%- if section.settings.social_facebook != blank -%}
-          <a href="{{ section.settings.social_facebook }}" class="social-link" title="Facebook" target="_blank">FB</a>
-        {%- endif -%}
-        {%- if section.settings.social_twitter != blank -%}
-          <a href="{{ section.settings.social_twitter }}" class="social-link" title="Twitter" target="_blank">TW</a>
-        {%- endif -%}
-        {%- if section.settings.social_linkedin != blank -%}
-          <a href="{{ section.settings.social_linkedin }}" class="social-link" title="LinkedIn" target="_blank">LI</a>
-        {%- endif -%}
+
+        {% if section.settings.social_instagram != blank or section.settings.social_facebook != blank or section.settings.social_twitter != blank or section.settings.social_linkedin != blank %}
+          <div class="blueprint-footer__social-row">
+            <span class="social-label">CHANNELS:</span>
+            <div class="blueprint-footer__social-links">
+              {%- if section.settings.social_instagram != blank -%}
+                <a href="{{ section.settings.social_instagram }}" class="blueprint-footer__social-link" title="Instagram" target="_blank" rel="noopener">IG</a>
+              {%- endif -%}
+              {%- if section.settings.social_facebook != blank -%}
+                <a href="{{ section.settings.social_facebook }}" class="blueprint-footer__social-link" title="Facebook" target="_blank" rel="noopener">FB</a>
+              {%- endif -%}
+              {%- if section.settings.social_twitter != blank -%}
+                <a href="{{ section.settings.social_twitter }}" class="blueprint-footer__social-link" title="Twitter" target="_blank" rel="noopener">TW</a>
+              {%- endif -%}
+              {%- if section.settings.social_linkedin != blank -%}
+                <a href="{{ section.settings.social_linkedin }}" class="blueprint-footer__social-link" title="LinkedIn" target="_blank" rel="noopener">LI</a>
+              {%- endif -%}
+            </div>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
-  
-  <div class="footer__bottom">
-     {% if section.settings.copyright_text != blank %}
-       <div class="footer__copyright-custom">{{ section.settings.copyright_text }}</div>
-     {% else %}
-       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} {{ section.settings.copyright_notice }}</p>
-     {% endif %}
+
+  <!-- Copyright / Bottom Bar -->
+  <div class="blueprint-footer__bottom">
+    <div class="blueprint-footer__bottom-left">
+      {% if section.settings.copyright_text != blank %}
+        <div class="blueprint-footer__copyright-custom">{{ section.settings.copyright_text }}</div>
+      {% else %}
+        <span>© {{ 'now' | date: '%Y' }} {{ shop.name | upcase }} {{ section.settings.copyright_notice }}</span>
+      {% endif %}
+    </div>
+    <div class="blueprint-footer__bottom-right">
+      <span class="blueprint-footer__ref-tag">DOC_REF: FTR_{{ 'now' | date: '%y%m' }}</span>
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
-  .footer {
-    border-top: 1px solid var(--color-border);
+  /* ─── Blueprint Footer ─── */
+  .blueprint-footer {
     margin-top: 4rem;
-    padding-top: 0;
-    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     position: relative;
     z-index: 1;
   }
 
-  .footer__grid {
+  /* Header Bar */
+  .blueprint-footer__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(56, 189, 248, 0.05);
+  }
+
+  .blueprint-footer__title {
+    font-size: 1rem;
+    margin: 0;
+    color: var(--color-accent);
+    letter-spacing: 2px;
+  }
+
+  .blueprint-footer__meta {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    animation: blink-status 2.5s ease-in-out infinite;
+  }
+
+  @keyframes blink-status {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.2; }
+  }
+
+  /* Grid */
+  .blueprint-footer__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 Columns */
+    grid-template-columns: repeat(4, 1fr);
     border-bottom: 1px solid var(--color-border);
   }
-  
-  @media screen and (max-width: 900px) {
-    .footer__grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .footer__block:nth-child(even) {
-      border-right: none;
-    }
-    .footer__block:nth-child(odd) {
-      border-right: 1px solid var(--color-border);
-    }
-  }
 
-  @media screen and (max-width: 600px) {
-    .footer__grid {
-      grid-template-columns: 1fr;
-    }
-    .footer__block {
-      border-right: none !important;
-      border-bottom: 1px solid var(--color-border);
-    }
-  }
-
-  .footer__block {
-    padding: 2rem;
+  /* Panels */
+  .blueprint-footer__panel {
     border-right: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
   }
 
-  .footer__block:last-child {
+  .blueprint-footer__panel:last-child {
     border-right: none;
   }
 
-  .footer__heading {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-  
-  .footer__status {
-    font-size: 0.8rem;
-    opacity: 0.7;
-    margin-top: auto; /* Push to bottom */
+  .panel-label {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--color-accent);
+    border-bottom: 1px dashed var(--color-border);
+    background: rgba(56, 189, 248, 0.03);
   }
 
-  .footer__menu-list {
+  .panel-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── Identity Panel ─── */
+  .blueprint-footer__logo-img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+    filter: brightness(1.1);
+  }
+
+  .blueprint-footer__brand-name {
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    color: var(--color-foreground);
+  }
+
+  .blueprint-footer__tagline {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .blueprint-footer__status-indicator {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    display: inline-block;
+    animation: pulse-dot 2s infinite;
+  }
+
+  .status-text {
+    letter-spacing: 2px;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* ─── Navigation Panel ─── */
+  .blueprint-footer__nav-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
-  .footer__menu-list li {
-    margin-bottom: 0.5rem;
+  .blueprint-footer__nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.07);
+    transition: background 0.2s ease;
   }
 
-  .footer__menu-list a {
+  .blueprint-footer__nav-item:last-child {
+    border-bottom: none;
+  }
+
+  .blueprint-footer__nav-item:hover {
+    background: rgba(56, 189, 248, 0.05);
+    padding-left: 0.5rem;
+  }
+
+  .nav-ref {
+    font-size: 0.65rem;
+    color: var(--color-accent);
+    opacity: 0.6;
+    min-width: 18px;
+  }
+
+  .blueprint-footer__nav-link {
+    font-size: 0.85rem;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s ease;
+  }
+
+  .blueprint-footer__nav-link:hover {
+    color: var(--color-accent);
     text-decoration: none;
   }
 
-  /* Newsletter Styles */
-  .footer__newsletter-text {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    opacity: 0.8;
+  /* ─── Comms / Newsletter Panel ─── */
+  .blueprint-footer__comms-text {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
   }
-  
-  .newsletter-input-group {
+
+  .blueprint-footer__form {
+    margin-top: auto;
+  }
+
+  .blueprint-footer__input-row {
     display: flex;
-    border: 1px solid var(--color-foreground);
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.5);
   }
-  
-  .newsletter-input {
+
+  .blueprint-footer__input {
     flex-grow: 1;
     border: none;
-    padding: 0.5rem;
+    padding: 0.7rem 1rem;
     background: transparent;
-    color: inherit;
-    font-family: inherit;
-    font-size: 0.9rem;
-    min-width: 0; /* Fix flex overflow */
+    color: var(--color-foreground);
+    font-family: var(--font-primary--family);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    min-width: 0;
   }
-  
-  .newsletter-input:focus {
+
+  .blueprint-footer__input::placeholder {
+    color: var(--color-foreground);
+    opacity: 0.3;
+    letter-spacing: 2px;
+  }
+
+  .blueprint-footer__input:focus {
     outline: none;
-    background-color: rgba(var(--color-foreground-rgb), 0.05);
+    background: rgba(56, 189, 248, 0.05);
   }
-  
-  .newsletter-button {
+
+  .blueprint-footer__submit {
     background: transparent;
     border: none;
-    border-left: 1px solid var(--color-foreground);
-    padding: 0 1rem;
+    border-left: 1px solid var(--color-border);
+    padding: 0.7rem 1.2rem;
     cursor: pointer;
-    color: inherit;
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-  
-  .newsletter-button:hover {
-    background-color: var(--color-foreground);
-    color: var(--color-background);
+    color: var(--color-accent);
+    font-family: var(--font-primary--family);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
   }
 
-  .newsletter-message {
+  .blueprint-footer__submit:hover {
+    background: var(--color-accent);
+    color: #0f172a;
+  }
+
+  .blueprint-footer__msg {
     display: block;
     margin-top: 0.5rem;
-    font-size: 0.8rem;
-  }
-  
-  .newsletter-message.error { color: red; }
-  .newsletter-message.success { color: green; }
-
-  /* System/Social Block */
-  .footer__block--system {
-    justify-content: space-between;
-    background-color: var(--color-foreground, #000);
-    color: var(--color-background, #fff);
-    position: relative;
-    overflow: hidden;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
   }
 
-  .architectural-feature {
+  .blueprint-footer__msg--error {
+    color: #f87171;
+  }
+
+  .blueprint-footer__msg--success {
+    color: var(--color-accent);
+  }
+
+  /* ─── Data / Coordinates Panel ─── */
+  .blueprint-footer__data-block {
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-family: monospace;
-    z-index: 2;
-    margin-bottom: 2rem;
+    gap: 12px;
+    margin-bottom: 1.5rem;
   }
 
-  .arch-icon {
-    width: 12px;
-    height: 12px;
-    background-color: currentColor;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
+  .data-icon {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-accent);
+    flex-shrink: 0;
+    animation: pulse-dot 2s infinite;
   }
-  
-  .arch-icon.grid {
+
+  .data-icon.grid {
     background: transparent;
-    border: 1px solid currentColor;
-    border-radius: 0;
-    width: 16px; 
-    height: 16px;
-    background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);
+    border: 1px solid var(--color-accent);
+    width: 14px;
+    height: 14px;
+    background-image:
+      linear-gradient(var(--color-accent) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-accent) 1px, transparent 1px);
     background-size: 4px 4px;
     animation: none;
   }
 
-  .arch-icon.pulse {
-     /* default styles apply */
-  }
-
-  .arch-icon.dot {
+  .data-icon.dot {
     animation: none;
   }
-  
-  .arch-icon.none {
+
+  .data-icon.none {
     display: none;
   }
 
-  .arch-data {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-  }
-
-  .arch-label {
-    font-size: 0.65rem;
-    opacity: 0.7;
+  .data-value {
+    font-size: 0.85rem;
     letter-spacing: 1px;
-    margin-bottom: 2px;
+    opacity: 0.8;
   }
 
-  .arch-value {
-    font-size: 0.9rem;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+  /* Social Row */
+  .blueprint-footer__social-row {
+    margin-top: auto;
+    border-top: 1px dashed var(--color-border);
+    padding-top: 1rem;
   }
-  
-  .footer__socials {
+
+  .social-label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    opacity: 0.4;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  .blueprint-footer__social-links {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
-    z-index: 2;
   }
-  
-  .social-link {
-    color: inherit;
+
+  .blueprint-footer__social-link {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    border: 1px solid var(--color-border);
+    padding: 0.25rem 0.6rem;
     text-decoration: none;
-    font-family: monospace;
-    font-size: 0.9rem;
-    border: 1px solid currentColor;
-    padding: 0.2rem 0.5rem;
+    color: var(--color-foreground);
     transition: all 0.2s ease;
   }
-  
-  .social-link:hover {
-    background-color: currentColor;
-    color: var(--color-foreground, #000); /* Invert */
+
+  .blueprint-footer__social-link:hover {
+    background: var(--color-accent);
+    color: #0f172a;
+    border-color: var(--color-accent);
+    text-decoration: none;
   }
 
-  .footer__bottom {
-    padding: 1rem 2rem;
-    font-size: 0.8rem;
-    text-align: left;
+  /* ─── Bottom Bar ─── */
+  .blueprint-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    font-size: 0.7rem;
+    opacity: 0.5;
+    letter-spacing: 1px;
   }
-  
-  .footer__copyright-custom p {
+
+  .blueprint-footer__copyright-custom p {
     margin: 0;
   }
 
-  @keyframes pulse {
-    0% { opacity: 0.4; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.1); }
-    100% { opacity: 0.4; transform: scale(0.9); }
+  .blueprint-footer__ref-tag {
+    color: var(--color-accent);
+    opacity: 0.6;
+  }
+
+  /* ─── Responsive ─── */
+  @media screen and (max-width: 900px) {
+    .blueprint-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .blueprint-footer__panel:nth-child(2) {
+      border-right: none;
+    }
+    .blueprint-footer__panel:nth-child(1),
+    .blueprint-footer__panel:nth-child(2) {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .blueprint-footer__grid {
+      grid-template-columns: 1fr;
+    }
+    .blueprint-footer__panel {
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .blueprint-footer__panel:last-child {
+      border-bottom: none;
+    }
+    .blueprint-footer__header {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+    .blueprint-footer__bottom {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
   }
 {% endstylesheet %}
 
@@ -344,6 +534,16 @@
 {
   "name": "t:general.footer",
   "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "footer_title",
+      "label": "Footer Title",
+      "default": "SYSTEM INDEX"
+    },
     {
       "type": "header",
       "content": "Navigation"
@@ -366,13 +566,13 @@
       "type": "text",
       "id": "footer_logo_text",
       "label": "Footer Logo Text",
-      "info": "Overrides the default shop name if no footer logo is uploaded."
+      "info": "Overrides the default shop name."
     },
     {
       "type": "color",
       "id": "footer_logo_text_color",
       "label": "Footer Logo Text Color",
-      "default": "#ffffff"
+      "default": "#E2E8F0"
     },
     {
        "type": "range",
@@ -385,6 +585,12 @@
        "default": 120
     },
     {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Engineered for precision."
+    },
+    {
       "type": "header",
       "content": "Newsletter"
     },
@@ -392,18 +598,17 @@
       "type": "text",
       "id": "newsletter_heading",
       "label": "Newsletter Heading",
-      "default": "NEWSLETTER"
+      "default": "COMMUNICATIONS"
     },
     {
       "type": "text",
       "id": "newsletter_text",
       "label": "Newsletter Text",
-      "default": "Subscribe for updates."
+      "default": "Subscribe for project updates and field reports."
     },
     {
       "type": "header",
-      "content": "Architectural Feature",
-      "info": "Replaces the system status box."
+      "content": "Data Feature"
     },
     {
       "type": "text",
