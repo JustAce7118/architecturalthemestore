@@ -1,0 +1,353 @@
+{% comment %}
+  Blueprint Knowledge Base
+  - FAQ accordion styled as a database query terminal
+  - Click to expand answers with typing cursor effect
+  - Each entry has a query ID and category tag
+{% endcomment %}
+
+<div class="blueprint-kb">
+  <div class="blueprint-kb__header">
+    <h3 class="blueprint-kb__title">{{ section.settings.heading | default: 'KNOWLEDGE BASE' | upcase }}</h3>
+    <span class="blueprint-kb__meta">// DB_QUERY_ENGINE — {{ section.blocks.size }} ENTRIES INDEXED</span>
+  </div>
+
+  <div class="blueprint-kb__terminal">
+    <div class="blueprint-kb__terminal-bar">
+      <div class="terminal-dots">
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+      </div>
+      <span class="terminal-title">{{ section.settings.terminal_label | default: 'query_database.sh' }}</span>
+    </div>
+
+    <div class="blueprint-kb__entries">
+      {% for block in section.blocks %}
+        <details class="kb-entry" {{ block.shopify_attributes }}>
+          <summary class="kb-entry__question">
+            <div class="kb-entry__question-left">
+              <span class="kb-entry__prompt">&gt;</span>
+              <span class="kb-entry__q-text">{{ block.settings.question | default: 'Query not defined' }}</span>
+            </div>
+            <div class="kb-entry__question-right">
+              {% if block.settings.category != blank %}
+                <span class="kb-entry__category">{{ block.settings.category | upcase }}</span>
+              {% endif %}
+              <span class="kb-entry__id">Q_{{ forloop.index | prepend: '00' | slice: -3, 3 }}</span>
+              <span class="kb-entry__toggle">+</span>
+            </div>
+          </summary>
+          <div class="kb-entry__answer">
+            <div class="kb-entry__answer-content">
+              <span class="kb-entry__answer-prefix">→ RESULT:</span>
+              <div class="kb-entry__answer-text">{{ block.settings.answer }}</div>
+            </div>
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+
+    <div class="blueprint-kb__terminal-footer">
+      <span class="terminal-cursor">_</span>
+      <span class="terminal-status">READY — AWAITING QUERY</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .blueprint-kb {
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blueprint-kb__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blueprint-kb__title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--color-accent);
+    letter-spacing: 2px;
+  }
+
+  .blueprint-kb__meta {
+    font-size: 0.7rem;
+    opacity: 0.4;
+  }
+
+  /* Terminal Window */
+  .blueprint-kb__terminal {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .blueprint-kb__terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(56, 189, 248, 0.03);
+  }
+
+  .terminal-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .terminal-dot {
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--color-border);
+    display: block;
+  }
+
+  .terminal-dot:first-child { background: rgba(248, 113, 113, 0.6); }
+  .terminal-dot:nth-child(2) { background: rgba(251, 191, 36, 0.6); }
+  .terminal-dot:last-child { background: rgba(74, 222, 128, 0.6); }
+
+  .terminal-title {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    letter-spacing: 1px;
+  }
+
+  /* Entries */
+  .blueprint-kb__entries {
+    /* entries stacked */
+  }
+
+  .kb-entry {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .kb-entry:last-child {
+    border-bottom: none;
+  }
+
+  .kb-entry__question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.2s ease;
+    gap: 1rem;
+  }
+
+  .kb-entry__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .kb-entry__question:hover {
+    background: rgba(56, 189, 248, 0.05);
+  }
+
+  .kb-entry__question-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .kb-entry__prompt {
+    color: var(--color-accent);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .kb-entry__q-text {
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  .kb-entry__question-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .kb-entry__category {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-accent);
+    opacity: 0.6;
+  }
+
+  .kb-entry__id {
+    font-size: 0.55rem;
+    opacity: 0.3;
+    letter-spacing: 1px;
+  }
+
+  .kb-entry__toggle {
+    color: var(--color-accent);
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+    width: 16px;
+    text-align: center;
+  }
+
+  .kb-entry[open] .kb-entry__toggle {
+    transform: rotate(45deg);
+  }
+
+  /* Answer */
+  .kb-entry__answer {
+    padding: 0 1.25rem 1.25rem 3rem;
+    animation: kb-fadeIn 0.3s ease;
+  }
+
+  .kb-entry__answer-content {
+    border-left: 2px solid rgba(56, 189, 248, 0.2);
+    padding-left: 1rem;
+  }
+
+  .kb-entry__answer-prefix {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--color-accent);
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .kb-entry__answer-text {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    opacity: 0.7;
+  }
+
+  .kb-entry__answer-text p {
+    margin: 0 0 0.5rem;
+  }
+
+  .kb-entry__answer-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  @keyframes kb-fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Terminal Footer */
+  .blueprint-kb__terminal-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.7rem;
+  }
+
+  .terminal-cursor {
+    color: var(--color-accent);
+    animation: cursor-blink 1s step-end infinite;
+  }
+
+  .terminal-status {
+    opacity: 0.3;
+    letter-spacing: 1px;
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media screen and (max-width: 750px) {
+    .blueprint-kb__header {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+    .kb-entry__question-right {
+      display: none; /* Keep it clean on mobile, only show toggle */
+    }
+    .kb-entry__question-right .kb-entry__toggle {
+      display: block;
+    }
+    .kb-entry__question {
+      padding: 0.75rem 1rem;
+    }
+    .kb-entry__answer {
+      padding-left: 1rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Knowledge Base (FAQ)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "KNOWLEDGE BASE"
+    },
+    {
+      "type": "text",
+      "id": "terminal_label",
+      "label": "Terminal Window Title",
+      "default": "query_database.sh"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "entry",
+      "name": "FAQ Entry",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your design process?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Our process follows a rigorous 4-phase methodology: Research & Analysis, Concept Design, Development, and Fabrication. Each phase includes documented checkpoints and client review sessions.</p>"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category Tag",
+          "default": "PROCESS"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Knowledge Base (FAQ)",
+      "blocks": [
+        { "type": "entry", "settings": { "question": "What is your design process?", "answer": "<p>Our process follows a rigorous 4-phase methodology: Research & Analysis, Concept Design, Development, and Fabrication. Each phase includes documented checkpoints and client review sessions.</p>", "category": "PROCESS" } },
+        { "type": "entry", "settings": { "question": "What materials do you work with?", "answer": "<p>We specialize in composite materials, engineered timber, high-performance concrete, and structural steel. All materials are sourced from certified sustainable suppliers.</p>", "category": "MATERIALS" } },
+        { "type": "entry", "settings": { "question": "How long does a typical project take?", "answer": "<p>Timeline varies by scope. Small installations: 4-8 weeks. Medium projects: 3-6 months. Large-scale developments: 12-24 months. All timelines include quality assurance and testing phases.</p>", "category": "TIMELINE" } },
+        { "type": "entry", "settings": { "question": "Do you offer consultations?", "answer": "<p>Yes. We offer initial 60-minute consultations at no charge. This includes a site assessment brief, feasibility overview, and preliminary budget framework.</p>", "category": "SERVICE" } },
+        { "type": "entry", "settings": { "question": "What regions do you serve?", "answer": "<p>We operate globally with primary offices in North America, Europe, and Asia-Pacific. Remote consultation is available for all regions.</p>", "category": "COVERAGE" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

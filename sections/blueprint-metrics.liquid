@@ -1,0 +1,320 @@
+{% comment %}
+  Blueprint System Metrics
+  - Animated stat counters styled as monitoring dashboard
+  - Each metric is a data panel with unit, label, and progress bar
+  - IntersectionObserver triggers count-up animation
+{% endcomment %}
+
+<div class="blueprint-metrics">
+  <div class="blueprint-metrics__header">
+    <h3 class="blueprint-metrics__title">{{ section.settings.heading | default: 'SYSTEM METRICS' | upcase }}</h3>
+    <span class="blueprint-metrics__meta">// MONITORING_DASHBOARD — REAL-TIME</span>
+  </div>
+
+  <div class="blueprint-metrics__grid">
+    {% for block in section.blocks %}
+      <div class="metric-panel" {{ block.shopify_attributes }}>
+        <div class="metric-panel__label-bar">
+          <span class="metric-panel__label">{{ block.settings.label | default: 'METRIC' | upcase }}</span>
+          <span class="metric-panel__unit">{{ block.settings.unit | default: '' }}</span>
+        </div>
+
+        <div class="metric-panel__value-area">
+          <span class="metric-panel__value" data-target="{{ block.settings.value | default: 0 }}">0</span>
+          {% if block.settings.suffix != blank %}
+            <span class="metric-panel__suffix">{{ block.settings.suffix }}</span>
+          {% endif %}
+        </div>
+
+        {% if block.settings.show_bar %}
+          <div class="metric-panel__bar-track">
+            <div class="metric-panel__bar-fill" style="--bar-width: {{ block.settings.bar_percent | default: 75 }}%;"></div>
+          </div>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <p class="metric-panel__desc">{{ block.settings.description }}</p>
+        {% endif %}
+
+        <span class="metric-panel__ref">SYS_{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.metric-panel__value[data-target]');
+    const bars = document.querySelectorAll('.metric-panel__bar-fill');
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+
+          // Animate counter
+          if (el.classList.contains('metric-panel__value')) {
+            const target = parseInt(el.getAttribute('data-target'), 10);
+            if (isNaN(target)) return;
+            const duration = 2000;
+            const start = performance.now();
+
+            function step(now) {
+              const elapsed = now - start;
+              const progress = Math.min(elapsed / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              el.textContent = Math.floor(eased * target);
+              if (progress < 1) {
+                requestAnimationFrame(step);
+              } else {
+                el.textContent = target;
+              }
+            }
+            requestAnimationFrame(step);
+          }
+
+          // Animate bar
+          if (el.classList.contains('metric-panel__bar-fill')) {
+            el.style.width = el.style.getPropertyValue('--bar-width');
+          }
+
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    counters.forEach(function(c) { observer.observe(c); });
+    bars.forEach(function(b) { observer.observe(b); });
+  });
+</script>
+
+<style>
+  .blueprint-metrics {
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blueprint-metrics__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blueprint-metrics__title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--color-accent);
+    letter-spacing: 2px;
+  }
+
+  .blueprint-metrics__meta {
+    font-size: 0.7rem;
+    opacity: 0.4;
+    animation: metrics-blink 3s infinite;
+  }
+
+  @keyframes metrics-blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.15; }
+  }
+
+  .blueprint-metrics__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  /* Panel */
+  .metric-panel {
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.3s ease;
+  }
+
+  .metric-panel:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  .metric-panel__label-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px dashed var(--color-border);
+    background: rgba(56, 189, 248, 0.03);
+  }
+
+  .metric-panel__label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--color-accent);
+  }
+
+  .metric-panel__unit {
+    font-size: 0.6rem;
+    opacity: 0.4;
+    letter-spacing: 1px;
+  }
+
+  .metric-panel__value-area {
+    padding: 1.5rem 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .metric-panel__value {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--color-foreground);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .metric-panel__suffix {
+    font-size: 1rem;
+    opacity: 0.5;
+    margin-left: 2px;
+  }
+
+  /* Progress Bar */
+  .metric-panel__bar-track {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 0 1rem;
+  }
+
+  .metric-panel__bar-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--color-accent), rgba(56, 189, 248, 0.4));
+    transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .metric-panel__desc {
+    padding: 1rem;
+    font-size: 0.75rem;
+    opacity: 0.5;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .metric-panel__ref {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.55rem;
+    border-top: 1px dashed var(--color-border);
+    color: var(--color-accent);
+    opacity: 0.4;
+    letter-spacing: 2px;
+    margin-top: auto;
+  }
+
+  @media screen and (max-width: 600px) {
+    .blueprint-metrics__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .blueprint-metrics__header {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    .blueprint-metrics__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "System Metrics",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "SYSTEM METRICS"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "metric",
+      "name": "Metric",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Metric Label",
+          "default": "PROJECTS COMPLETE"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Metric Value (number)",
+          "default": "127"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Suffix (optional)",
+          "info": "e.g., +, %, K, M",
+          "default": "+"
+        },
+        {
+          "type": "text",
+          "id": "unit",
+          "label": "Unit Label",
+          "default": "COUNT"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_bar",
+          "label": "Show Progress Bar",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "bar_percent",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Bar Fill Percentage",
+          "default": 75
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "System Metrics",
+      "blocks": [
+        { "type": "metric", "settings": { "label": "PROJECTS COMPLETE", "value": "127", "suffix": "+", "unit": "COUNT", "show_bar": true, "bar_percent": 85 } },
+        { "type": "metric", "settings": { "label": "SQ FOOTAGE DESIGNED", "value": "48000", "suffix": "", "unit": "SQ FT", "show_bar": true, "bar_percent": 60 } },
+        { "type": "metric", "settings": { "label": "CLIENT SATISFACTION", "value": "98", "suffix": "%", "unit": "RATE", "show_bar": true, "bar_percent": 98 } },
+        { "type": "metric", "settings": { "label": "TEAM MEMBERS", "value": "34", "suffix": "", "unit": "ACTIVE", "show_bar": false } }
+      ]
+    }
+  ]
+}
+{% endschema %}

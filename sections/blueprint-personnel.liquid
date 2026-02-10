@@ -1,0 +1,411 @@
+{% comment %}
+  Blueprint Personnel Dossier
+  - Team member profiles as technical dossiers
+  - Clearance level indicators, specialization tags
+  - Grayscale photos with hover color reveal
+{% endcomment %}
+
+<div class="blueprint-personnel">
+  <div class="blueprint-personnel__header">
+    <h3 class="blueprint-personnel__title">{{ section.settings.heading | default: 'PERSONNEL DOSSIER' | upcase }}</h3>
+    <span class="blueprint-personnel__meta">// CLEARANCE: {{ section.settings.clearance_level | default: 'LEVEL 3' | upcase }} — {{ section.blocks.size }} OPERATIVES</span>
+  </div>
+
+  <div class="blueprint-personnel__grid">
+    {% for block in section.blocks %}
+      <div class="dossier-card" {{ block.shopify_attributes }}>
+        <!-- Photo -->
+        <div class="dossier-card__photo-wrapper">
+          {% if block.settings.photo != blank %}
+            {{ block.settings.photo | image_url: width: 600 | image_tag: loading: 'lazy', class: 'dossier-card__photo' }}
+          {% else %}
+            <div class="dossier-card__photo-placeholder">
+              <span>{{ block.settings.name | default: '?' | slice: 0 }}</span>
+            </div>
+          {% endif %}
+          <div class="dossier-card__photo-overlay">
+            <span class="dossier-card__scan-label">SCANNING...</span>
+          </div>
+          <span class="dossier-card__index">P_{{ forloop.index | prepend: '00' | slice: -3, 3 }}</span>
+        </div>
+
+        <!-- Data -->
+        <div class="dossier-card__data">
+          <div class="dossier-card__name-row">
+            <h4 class="dossier-card__name">{{ block.settings.name | default: 'OPERATIVE' | upcase }}</h4>
+            {% if block.settings.clearance != blank %}
+              <span class="dossier-card__clearance clearance--{{ block.settings.clearance }}">{{ block.settings.clearance | upcase }}</span>
+            {% endif %}
+          </div>
+
+          <div class="dossier-card__role">{{ block.settings.role | default: 'SPECIALIST' | upcase }}</div>
+
+          {% if block.settings.bio != blank %}
+            <p class="dossier-card__bio">{{ block.settings.bio }}</p>
+          {% endif %}
+
+          <!-- Specializations -->
+          {% if block.settings.spec_1 != blank or block.settings.spec_2 != blank or block.settings.spec_3 != blank %}
+            <div class="dossier-card__specs">
+              <span class="specs-label">SPECIALIZATIONS:</span>
+              <div class="specs-tags">
+                {% if block.settings.spec_1 != blank %}
+                  <span class="spec-tag">{{ block.settings.spec_1 | upcase }}</span>
+                {% endif %}
+                {% if block.settings.spec_2 != blank %}
+                  <span class="spec-tag">{{ block.settings.spec_2 | upcase }}</span>
+                {% endif %}
+                {% if block.settings.spec_3 != blank %}
+                  <span class="spec-tag">{{ block.settings.spec_3 | upcase }}</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Stats row -->
+          {% if block.settings.stat_label != blank %}
+            <div class="dossier-card__stat-row">
+              <span class="stat-label">{{ block.settings.stat_label | upcase }}:</span>
+              <span class="stat-value">{{ block.settings.stat_value }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .blueprint-personnel {
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .blueprint-personnel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blueprint-personnel__title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--color-accent);
+    letter-spacing: 2px;
+  }
+
+  .blueprint-personnel__meta {
+    font-size: 0.7rem;
+    opacity: 0.4;
+  }
+
+  .blueprint-personnel__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  /* Card */
+  .dossier-card {
+    border: 1px solid var(--color-border);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .dossier-card:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  /* Photo */
+  .dossier-card__photo-wrapper {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .dossier-card__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: filter 0.5s ease, transform 0.5s ease;
+  }
+
+  .dossier-card:hover .dossier-card__photo {
+    filter: grayscale(30%) contrast(1.05);
+    transform: scale(1.03);
+  }
+
+  .dossier-card__photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(56, 189, 248, 0.05);
+    font-size: 3rem;
+    color: var(--color-accent);
+    opacity: 0.3;
+  }
+
+  .dossier-card__photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(15, 23, 42, 0.9) 100%);
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 1rem;
+  }
+
+  .dossier-card__scan-label {
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .dossier-card:hover .dossier-card__scan-label {
+    opacity: 0.6;
+    animation: scan-blink 1s infinite;
+  }
+
+  @keyframes scan-blink {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.2; }
+  }
+
+  .dossier-card__index {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.55rem;
+    color: var(--color-accent);
+    opacity: 0.4;
+    letter-spacing: 1px;
+    background: rgba(15, 23, 42, 0.7);
+    padding: 0.2rem 0.4rem;
+    z-index: 2;
+  }
+
+  /* Data */
+  .dossier-card__data {
+    padding: 1rem;
+  }
+
+  .dossier-card__name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .dossier-card__name {
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+
+  .dossier-card__clearance {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    padding: 0.15rem 0.4rem;
+    border: 1px solid;
+  }
+
+  .clearance--alpha { color: #f87171; border-color: #f87171; }
+  .clearance--beta { color: #fbbf24; border-color: #fbbf24; }
+  .clearance--gamma { color: var(--color-accent); border-color: var(--color-accent); }
+  .clearance--delta { color: #4ade80; border-color: #4ade80; }
+
+  .dossier-card__role {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .dossier-card__bio {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    line-height: 1.6;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed var(--color-border);
+  }
+
+  /* Specializations */
+  .dossier-card__specs {
+    margin-bottom: 0.75rem;
+  }
+
+  .specs-label {
+    display: block;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    opacity: 0.4;
+    margin-bottom: 0.4rem;
+    color: var(--color-accent);
+  }
+
+  .specs-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .spec-tag {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+
+  .spec-tag:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* Stat */
+  .dossier-card__stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--color-border);
+    opacity: 0.5;
+  }
+
+  .stat-label { color: var(--color-accent); }
+
+  @media screen and (max-width: 600px) {
+    .blueprint-personnel__grid {
+      grid-template-columns: 1fr;
+    }
+    .blueprint-personnel__header {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Personnel Dossier",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "PERSONNEL DOSSIER"
+    },
+    {
+      "type": "text",
+      "id": "clearance_level",
+      "label": "Section Clearance Label",
+      "default": "Level 3"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "member",
+      "name": "Team Member",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Photo"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "ALEX MERCER"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role / Title",
+          "default": "LEAD ARCHITECT"
+        },
+        {
+          "type": "textarea",
+          "id": "bio",
+          "label": "Bio",
+          "default": "12 years of experience in structural design and sustainable architecture."
+        },
+        {
+          "type": "select",
+          "id": "clearance",
+          "label": "Clearance Level",
+          "options": [
+            { "value": "alpha", "label": "Alpha (Red)" },
+            { "value": "beta", "label": "Beta (Yellow)" },
+            { "value": "gamma", "label": "Gamma (Cyan)" },
+            { "value": "delta", "label": "Delta (Green)" }
+          ],
+          "default": "gamma"
+        },
+        {
+          "type": "text",
+          "id": "spec_1",
+          "label": "Specialization 1",
+          "default": "STRUCTURAL"
+        },
+        {
+          "type": "text",
+          "id": "spec_2",
+          "label": "Specialization 2",
+          "default": "SUSTAINABLE"
+        },
+        {
+          "type": "text",
+          "id": "spec_3",
+          "label": "Specialization 3"
+        },
+        {
+          "type": "text",
+          "id": "stat_label",
+          "label": "Stat Label (optional)",
+          "default": "PROJECTS"
+        },
+        {
+          "type": "text",
+          "id": "stat_value",
+          "label": "Stat Value (optional)",
+          "default": "47"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Personnel Dossier",
+      "blocks": [
+        { "type": "member", "settings": { "name": "ALEX MERCER", "role": "LEAD ARCHITECT", "bio": "12 years of experience in structural design and sustainable architecture.", "clearance": "alpha", "spec_1": "STRUCTURAL", "spec_2": "SUSTAINABLE", "stat_label": "PROJECTS", "stat_value": "47" } },
+        { "type": "member", "settings": { "name": "SARAH CHEN", "role": "DESIGN ENGINEER", "bio": "Specializes in computational design and parametric modeling.", "clearance": "gamma", "spec_1": "PARAMETRIC", "spec_2": "COMPUTATIONAL", "spec_3": "3D MODELING", "stat_label": "MODELS", "stat_value": "230" } },
+        { "type": "member", "settings": { "name": "JAMES OKORO", "role": "PROJECT MANAGER", "bio": "Oversees end-to-end delivery with a focus on precision and timing.", "clearance": "beta", "spec_1": "MANAGEMENT", "spec_2": "LOGISTICS", "stat_label": "DELIVERED", "stat_value": "89" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
