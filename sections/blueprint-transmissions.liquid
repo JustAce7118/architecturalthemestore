@@ -1,8 +1,8 @@
 {% comment %}
-  Blueprint Client Transmissions
-  - Testimonials styled as intercepted communications
-  - Signal strength indicators & client metadata
-  - Typing animation on reveal
+  Blueprint Client Transmissions (Reviews)
+  - Testimonials / reviews styled as intercepted communications
+  - Star ratings, signal strength indicators & client metadata
+  - Optional review image attachment
 {% endcomment %}
 
 <div class="blueprint-transmissions">
@@ -22,8 +22,33 @@
             <span class="signal-bar {% if block.settings.signal_strength == '5' or block.settings.signal_strength == '4' %}active{% endif %}"></span>
             <span class="signal-bar {% if block.settings.signal_strength == '5' %}active{% endif %}"></span>
           </div>
+
+          <!-- Star Rating -->
+          {% if block.settings.star_rating != '0' %}
+            <div class="transmission-card__stars">
+              {% assign rating = block.settings.star_rating | plus: 0 %}
+              {% for i in (1..5) %}
+                {% if i <= rating %}
+                  <span class="star star--filled">★</span>
+                {% else %}
+                  <span class="star star--empty">☆</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
           <span class="transmission-card__id">TX_{{ forloop.index | prepend: '00' | slice: -3, 3 }}</span>
         </div>
+
+        <!-- Review Image -->
+        {% if block.settings.review_image != blank %}
+          <div class="transmission-card__image-wrapper">
+            {{ block.settings.review_image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'transmission-card__image' }}
+            <div class="transmission-card__image-overlay">
+              <span class="image-tag">ATTACHMENT_{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+            </div>
+          </div>
+        {% endif %}
 
         <div class="transmission-card__body">
           <div class="transmission-card__quote">
@@ -124,6 +149,7 @@
     padding: 0.6rem 1rem;
     border-bottom: 1px dashed var(--color-border);
     background: rgba(56, 189, 248, 0.03);
+    gap: 0.75rem;
   }
 
   .transmission-card__signal {
@@ -149,11 +175,66 @@
     background: var(--color-accent);
   }
 
+  /* Star Rating */
+  .transmission-card__stars {
+    display: flex;
+    gap: 2px;
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .star--filled {
+    color: #fbbf24;
+  }
+
+  .star--empty {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
   .transmission-card__id {
     font-size: 0.6rem;
     color: var(--color-accent);
     opacity: 0.5;
     letter-spacing: 1px;
+    margin-left: auto;
+  }
+
+  /* Review Image */
+  .transmission-card__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .transmission-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(60%) contrast(1.05);
+    transition: filter 0.4s ease, transform 0.4s ease;
+  }
+
+  .transmission-card:hover .transmission-card__image {
+    filter: grayscale(0%) contrast(1.05);
+    transform: scale(1.03);
+  }
+
+  .transmission-card__image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(15, 23, 42, 0.8));
+    padding: 2rem 0.75rem 0.5rem;
+    pointer-events: none;
+  }
+
+  .image-tag {
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--color-accent);
+    opacity: 0.6;
   }
 
   /* Card Body */
@@ -278,8 +359,28 @@
         {
           "type": "textarea",
           "id": "quote",
-          "label": "Quote / Testimonial",
+          "label": "Quote / Review Text",
           "default": "The precision and attention to structural detail exceeded all expectations. A truly engineered masterpiece."
+        },
+        {
+          "type": "select",
+          "id": "star_rating",
+          "label": "Star Rating",
+          "options": [
+            { "value": "0", "label": "No Stars" },
+            { "value": "1", "label": "★ (1 Star)" },
+            { "value": "2", "label": "★★ (2 Stars)" },
+            { "value": "3", "label": "★★★ (3 Stars)" },
+            { "value": "4", "label": "★★★★ (4 Stars)" },
+            { "value": "5", "label": "★★★★★ (5 Stars)" }
+          ],
+          "default": "5"
+        },
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Review Image",
+          "info": "Optional photo attached to this review (e.g. product in use, project result)."
         },
         {
           "type": "text",
@@ -296,7 +397,7 @@
         {
           "type": "image_picker",
           "id": "avatar",
-          "label": "Client Photo"
+          "label": "Client Photo (Avatar)"
         },
         {
           "type": "text",
@@ -324,9 +425,9 @@
     {
       "name": "Client Transmissions",
       "blocks": [
-        { "type": "transmission", "settings": { "quote": "The precision and attention to structural detail exceeded all expectations.", "name": "ALEX MERCER", "role": "CEO, NEXUS CORP", "project_ref": "NX-2024", "signal_strength": "5" } },
-        { "type": "transmission", "settings": { "quote": "From concept to completion, every phase was documented and delivered with military-grade precision.", "name": "SARAH CHEN", "role": "DIRECTOR, APEX STUDIO", "project_ref": "AP-2023", "signal_strength": "4" } },
-        { "type": "transmission", "settings": { "quote": "A seamless integration of form and function. The engineering speaks for itself.", "name": "JAMES OKORO", "role": "LEAD ARCHITECT, VERTEX", "project_ref": "VX-2024", "signal_strength": "5" } }
+        { "type": "transmission", "settings": { "quote": "The precision and attention to structural detail exceeded all expectations.", "name": "ALEX MERCER", "role": "CEO, NEXUS CORP", "project_ref": "NX-2024", "signal_strength": "5", "star_rating": "5" } },
+        { "type": "transmission", "settings": { "quote": "From concept to completion, every phase was documented and delivered with military-grade precision.", "name": "SARAH CHEN", "role": "DIRECTOR, APEX STUDIO", "project_ref": "AP-2023", "signal_strength": "4", "star_rating": "4" } },
+        { "type": "transmission", "settings": { "quote": "A seamless integration of form and function. The engineering speaks for itself.", "name": "JAMES OKORO", "role": "LEAD ARCHITECT, VERTEX", "project_ref": "VX-2024", "signal_strength": "5", "star_rating": "5" } }
       ]
     }
   ]
